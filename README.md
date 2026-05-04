@@ -1,32 +1,43 @@
-OpenConnect for Android
-=======================
+# OpenConnect for Android
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![Build Status](https://travis-ci.org/cernekee/ics-openconnect.svg?branch=master)](https://travis-ci.org/cernekee/ics-openconnect)
 
-This is a VPN client for Android, based on the Linux build of
-[OpenConnect](http://www.infradead.org/openconnect/).
+基于 [OpenConnect](http://www.infradead.org/openconnect/) Linux 版本构建的 Android VPN 客户端。
 
-Much of the Java code was derived from [OpenVPN for Android](https://play.google.com/store/apps/details?id=de.blinkt.openvpn&hl=en) by Arne Schwabe.
+本项目 fork 自 [cernekee/ics-openconnect](https://github.com/cernekee/ics-openconnect)，原项目已停止维护。本分支在原项目基础上进行了 Material Design 现代化改造和 Android 15 适配。
 
-OpenConnect for Android is released under the GPLv2 license.  For more
-information see the [COPYING](COPYING) and [doc/LICENSE.txt](doc/LICENSE.txt)
-files.
+## 主要改动
 
-Changelog: see [doc/CHANGES.txt](doc/CHANGES.txt)
+### UI 现代化：Holo → Material Design
 
-To help out with translations, please visit
-[this project's page on Transifex](https://www.transifex.com/projects/p/ics-openconnect/).
+- **主题迁移**：`Theme.Holo.Light` → `Theme.Material3.Light`，全面采用 Material Design 3 配色
+- **导航栏迁移**：`ActionBar.NAVIGATION_MODE_TABS` → `TabLayout + ViewPager2`，支持左右滑动切换页面
+- **移除 splitActionBarWhenNarrow**：解决了底部操作栏遮挡内容区域的问题
+- **Toolbar 替代 ActionBar**：MainActivity 使用 `CoordinatorLayout + MaterialToolbar`，支持滚动行为
+- **页面边距**：所有内容页面添加 16dp 水平内边距，不再贴边显示
+- **FAQ 页面修复**：修复了 Holo 时代遗留的白色字体在白色背景上看不清的问题
 
-## Downloads and support
+### Android 15 适配
 
-Official releases are posted in the [XDA thread](http://forum.xda-developers.com/showthread.php?t=2616121) and on [Google Play](https://play.google.com/store/apps/details?id=app.openconnect).
+- **Edge-to-edge 处理**：Android 15 默认启用边到边显示，通过 `fitsSystemWindows` 和 `WindowInsetsCompat` 确保内容不被状态栏/导航栏遮挡
+- **minSdk/targetSdk 升级至 35**：适配 Android 15 API
+- **编译工具链升级**：compileSdk 35，Gradle 8.x，AndroidX 依赖
 
-Binary APK files are also available at [F-Droid](https://f-droid.org/repository/browse/?fdid=app.openconnect).
+### 关键 Bug 修复
 
-No registration is required to download from XDA or F-Droid.
+- **密码认证对话框不显示**：`VPNConnector` 中广播接收器的 `RECEIVER_NOT_EXPORTED` 改为 `RECEIVER_EXPORTED`，修复了 Android 14+ 上认证对话框无法弹出的问题
+- **PendingIntent 标志**：`OpenVpnService` 中 PendingIntent 添加 `FLAG_IMMUTABLE`，适配 Android 12+ 安全要求
+- **VPN 线程重复启动**：`onStartCommand` 中增加重复启动保护
+- **表单认证后无法连接**：`OpenConnectManagementThread` 中表单提交后补充 `resetCancel()` 调用
+- **空指针崩溃**：`ProfileManager` 中 `prefsdir.list()` 返回值增加空检查
 
-## Screenshots
+### 依赖迁移
+
+- `android.app.Fragment` / `ListFragment` → `androidx.fragment.app.Fragment`
+- `Activity` → `AppCompatActivity`
+- 新增 AndroidX 依赖：appcompat、material、fragment、viewpager2、coordinatorlayout
+
+## 截图
 
 ![screenshot-0](screenshots/screenshot-0.png)&nbsp;
 ![screenshot-1](screenshots/screenshot-1.png)
@@ -34,48 +45,40 @@ No registration is required to download from XDA or F-Droid.
 ![screenshot-2](screenshots/screenshot-2.png)&nbsp;
 ![screenshot-3](screenshots/screenshot-3.png)
 
-## Building from source
+## 从源码构建
 
-### Prerequisites
+### 前置条件
 
-On the host side you'll need to install:
+- Android SDK（设置 `ANDROID_HOME` 环境变量）
+- JDK 17+
+- Android NDK（如需编译 native 组件）
+- git
 
-* Android SDK in your $PATH (both platform-tools/ and tools/ directories)
-* $ANDROID\_HOME pointed at the Android SDK directory
-* javac 1.8 and a recent version of Apache ant in your $PATH
-* Use the Android SDK Manager to install API 19
-* NDK r16b, nominally unzipped under /opt/android-sdk-linux\_x86/
-* Host-side gcc, make, etc. (Red Hat "Development Tools" group or Debian build-essential)
-* git, autoconf, automake, and libtool
+### 编译
 
-### Compiling the external dependencies
+```bash
+git clone https://github.com/fengerzh/ics-openconnect
+cd ics-openconnect
+git submodule init
+git submodule update
+make -C external    # 编译 native 依赖（需要 Linux 主机）
+./gradlew assembleDebug
+```
 
-Building OpenConnect from source requires compiling several .jar files and
-native binaries from external packages.  These commands will build the binary
-components and copy them into the appropriate library and asset directories:
+安装到设备：
 
-    git clone https://github.com/cernekee/ics-openconnect
-    cd ics-openconnect
-    git submodule init
-    git submodule update
-    make -C external
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
 
-This procedure only runs on a Linux PC.  If you are unable to build from
-source, you can try fetching the cached artifacts from a recent CI build:
+如果无法编译 native 组件，可以尝试下载 CI 构建缓存：
 
-    ./misc/download-artifacts.sh
+```bash
+./misc/download-artifacts.sh
+```
 
-### Compiling the app
+## 许可证
 
-After the binary components are built, this compiles the Java sources into
-an APK file:
+OpenConnect for Android 基于 GPLv2 许可证发布，详见 [COPYING](COPYING) 和 [doc/LICENSE.txt](doc/LICENSE.txt)。
 
-    cd ics-openconnect
-    ./gradlew assembleDebug
-
-To install the APK on a device:
-
-    adb install -r app/build/outputs/apk/debug/app-debug.apk
-
-Logs of successful (and not-so-successful) builds can be found on this project's
-[Travis CI page](https://travis-ci.org/cernekee/ics-openconnect).
+Java 代码部分源自 Arne Schwabe 的 [OpenVPN for Android](https://play.google.com/store/apps/details?id=de.blinkt.openvpn&hl=en)。
