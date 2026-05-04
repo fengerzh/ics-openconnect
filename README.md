@@ -1,6 +1,7 @@
 # OpenConnect for Android
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![Unit Tests](https://github.com/fengerzh/ics-openconnect/actions/workflows/test.yml/badge.svg)](https://github.com/fengerzh/ics-openconnect/actions/workflows/test.yml)
 
 基于 [OpenConnect](http://www.infradead.org/openconnect/) Linux 版本构建的 Android VPN 客户端。
 
