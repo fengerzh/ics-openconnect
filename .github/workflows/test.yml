@@ -1,0 +1,77 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Generate JaCoCo report
+        run: ./gradlew jacocoTestReport
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            app/build/reports/tests/
+            app/build/reports/jacoco/
+
+      - name: Print coverage summary
+        if: always()
+        run: |
+          if [ -f app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml ]; then
+            python3 -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml')
+          root = tree.getroot()
+          for pkg in root.findall('package'):
+              for cls in pkg.findall('class'):
+                  for counter in cls.findall('counter'):
+                      if counter.get('type') == 'INSTRUCTION':
+                          missed = int(counter.get('missed'))
+                          covered = int(counter.get('covered'))
+                          total = missed + covered
+                          if total > 0:
+                              pct = covered * 100 / total
+                              print(f'{cls.get(\"name\"):60s} {pct:5.1f}% ({covered}/{total})')
+          for counter in root.findall('counter'):
+              if counter.get('type') == 'INSTRUCTION':
+                  missed = int(counter.get('missed'))
+                  covered = int(counter.get('covered'))
+                  total = missed + covered
+                  pct = covered * 100 / total
+                  print(f'\nTOTAL: {pct:.1f}% ({covered}/{total} instructions)')
+          "
+          else
+            echo "JaCoCo report not found"
+          fi
