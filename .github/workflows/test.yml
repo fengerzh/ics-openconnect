@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -27,6 +29,22 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build wrapper jars from submodule sources
+        run: |
+          # Compile openconnect-wrapper.jar from submodule source
+          mkdir -p external/openconnect/java/build
+          javac -d external/openconnect/java/build \
+            external/openconnect/java/src/org/infradead/libopenconnect/LibOpenConnect.java
+          jar cf app/libs/openconnect-wrapper.jar \
+            -C external/openconnect/java/build .
+
+          # Compile stoken-wrapper.jar from submodule source
+          mkdir -p external/stoken/java/build
+          javac -d external/stoken/java/build \
+            external/stoken/java/src/org/stoken/LibStoken.java
+          jar cf app/libs/stoken-wrapper.jar \
+            -C external/stoken/java/build .
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
