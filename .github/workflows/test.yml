@@ -12,8 +12,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -30,31 +28,20 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
 
-      - name: Build wrapper jars from submodule sources
+      - name: Build wrapper jars from project sources
         run: |
-          # Verify submodule sources exist
-          ls -la external/openconnect/java/src/org/infradead/libopenconnect/LibOpenConnect.java
-          ls -la external/stoken/java/src/org/stoken/LibStoken.java
+          # Compile openconnect-wrapper.jar from project-local source
+          # (includes local patches like resetCancel() that are not in the upstream submodule)
+          mkdir -p /tmp/openconnect-build
+          javac -d /tmp/openconnect-build \
+            app/src/main/java-wrappers/org/infradead/libopenconnect/LibOpenConnect.java
+          jar cf app/libs/openconnect-wrapper.jar -C /tmp/openconnect-build .
 
-          # Compile openconnect-wrapper.jar from submodule source
-          mkdir -p external/openconnect/java/build
-          javac -d external/openconnect/java/build \
-            external/openconnect/java/src/org/infradead/libopenconnect/LibOpenConnect.java
-          jar cf app/libs/openconnect-wrapper.jar \
-            -C external/openconnect/java/build .
-
-          # Compile stoken-wrapper.jar from submodule source
-          mkdir -p external/stoken/java/build
-          javac -d external/stoken/java/build \
-            external/stoken/java/src/org/stoken/LibStoken.java
-          jar cf app/libs/stoken-wrapper.jar \
-            -C external/stoken/java/build .
-
-          # Verify jars were created and contain expected classes
-          ls -la app/libs/openconnect-wrapper.jar app/libs/stoken-wrapper.jar
-          jar tf app/libs/openconnect-wrapper.jar
-          jar tf app/libs/stoken-wrapper.jar
-          javap -p external/openconnect/java/build/org/infradead/libopenconnect/LibOpenConnect.class | grep -E "cancel|resetCancel"
+          # Compile stoken-wrapper.jar from project-local source
+          mkdir -p /tmp/stoken-build
+          javac -d /tmp/stoken-build \
+            app/src/main/java-wrappers/org/stoken/LibStoken.java
+          jar cf app/libs/stoken-wrapper.jar -C /tmp/stoken-build .
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
