@@ -24,33 +24,45 @@
 
 package app.openconnect;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 
-public class FragActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-	public static final String TAG = "OpenConnect";
+public class FragActivity extends AppCompatActivity {
 
-	public static final String EXTRA_FRAGMENT_NAME = "app.openconnect.fragment_name";
+    public static final String TAG = "OpenConnect";
 
-	public static final String FRAGMENT_PREFIX = "app.openconnect.fragments.";
+    public static final String EXTRA_FRAGMENT_NAME = "app.openconnect.fragment_name";
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    public static final String FRAGMENT_PREFIX = "app.openconnect.fragments.";
 
-		if(savedInstanceState == null) {
-			try {
-				String fragName = getIntent().getStringExtra(EXTRA_FRAGMENT_NAME);
-				Fragment frag = (Fragment)Class.forName(FRAGMENT_PREFIX + fragName).newInstance();
-				getFragmentManager().beginTransaction().add(android.R.id.content, frag).commit();
-			} catch (Exception e) {
-				Log.e(TAG, "unable to create fragment", e);
-				finish();
-			}
-		}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(savedInstanceState == null) {
+            try {
+                String fragName = getIntent().getStringExtra(EXTRA_FRAGMENT_NAME);
+                Fragment frag = (Fragment)Class.forName(FRAGMENT_PREFIX + fragName).newInstance();
+                getFragmentManager().beginTransaction().add(android.R.id.content, frag).commit();
+            } catch (Exception e) {
+                Log.e(TAG, "unable to create fragment", e);
+                finish();
+            }
+        }
+
+        // Apply system bar insets as padding so content doesn't extend
+        // behind status/nav bars on Android 15+ edge-to-edge.
+        ViewCompat.setOnApplyWindowInsetsListener(
+                findViewById(android.R.id.content), (v, insets) -> {
+                    v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                            0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
+                    return insets;
+                });
     }
 
 }

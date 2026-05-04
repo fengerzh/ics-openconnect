@@ -26,168 +26,146 @@
 
 package app.openconnect;
 
-import java.util.ArrayList;
-
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
 import app.openconnect.core.OpenConnectManagementThread;
 import app.openconnect.core.OpenVpnService;
 import app.openconnect.core.VPNConnector;
 import app.openconnect.fragments.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
-	public static final String TAG = "OpenConnect";
+    public static final String TAG = "OpenConnect";
 
-	private ActionBar mBar;
+    private ViewPager2 mViewPager;
+    private TabLayout mTabLayout;
+    private MainPagerAdapter mPagerAdapter;
 
-	private ArrayList<TabContainer> mTabList = new ArrayList<TabContainer>();
+    private int mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED;
+    private VPNConnector mConn;
 
-	private TabContainer mConnectionTab;
-	private int mLastTab;
-	private boolean mTabsActive;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-	private int mConnectionState = OpenConnectManagementThread.STATE_DISCONNECTED;
-	private VPNConnector mConn;
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+        mViewPager = findViewById(R.id.view_pager);
+        mTabLayout = findViewById(R.id.tab_layout);
 
-		super.onCreate(savedInstanceState);
+        mPagerAdapter = new MainPagerAdapter(this);
+        mViewPager.setAdapter(mPagerAdapter);
 
-		mTabsActive = false;
-		if (savedInstanceState != null) {
-			mLastTab = savedInstanceState.getInt("active_tab");
-		}
+        new TabLayoutMediator(mTabLayout, mViewPager,
+            (tab, position) -> {
+                switch (position) {
+                    case 0:
+                        tab.setText(mConnectionState == OpenConnectManagementThread.STATE_DISCONNECTED
+                            ? R.string.vpn_list_title : R.string.status);
+                        break;
+                    case 1: tab.setText(R.string.log); break;
+                    case 2: tab.setText(R.string.faq); break;
+                }
+            }
+        ).attach();
 
-		mBar = getActionBar();
-		mBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        FeedbackFragment.recordUse(this, false);
+    }
 
-		mTabList.add(new TabContainer(0, R.string.vpn_list_title, new VPNProfileList()));
-		mTabList.add(new TabContainer(1, R.string.log, new LogFragment()));
-		mTabList.add(new TabContainer(2, R.string.faq, new FaqFragment()));
+    @Override
+    protected void onSaveInstanceState(Bundle b) {
+        super.onSaveInstanceState(b);
+        b.putInt("active_tab", mViewPager.getCurrentItem());
+    }
 
-		mConnectionTab = mTabList.get(0);
+    private void updateUI(OpenVpnService service) {
+        int newState = service.getConnectionState();
+        service.startActiveDialog(this);
 
-		FeedbackFragment.recordUse(this, false);
-	}
+        if (mConnectionState != newState) {
+            mConnectionState = newState;
+            mPagerAdapter.notifyTab0Changed();
+            TabLayout.Tab tab0 = mTabLayout.getTabAt(0);
+            if (tab0 != null) {
+                tab0.setText(newState == OpenConnectManagementThread.STATE_DISCONNECTED
+                    ? R.string.vpn_list_title : R.string.status);
+            }
+        }
+    }
 
-	@Override
-	protected void onSaveInstanceState(Bundle b) {
-		super.onSaveInstanceState(b);
-		b.putInt("active_tab", mLastTab);
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-	private void updateUI(OpenVpnService service) {
-		int newState = service.getConnectionState();
+        mConn = new VPNConnector(this, true) {
+            @Override
+            public void onUpdate(OpenVpnService service) {
+                updateUI(service);
+            }
+        };
+    }
 
-		service.startActiveDialog(this);
+    @Override
+    protected void onPause() {
+        mConn.stopActiveDialog();
+        mConn.unbind();
+        super.onPause();
+    }
 
-		if (mConnectionState != newState) {
-			if (newState == OpenConnectManagementThread.STATE_DISCONNECTED) {
-				mConnectionTab.replace(R.string.vpn_list_title, new VPNProfileList());
-			} else if (mConnectionState == OpenConnectManagementThread.STATE_DISCONNECTED) {
-				mConnectionTab.replace(R.string.status, new StatusFragment());
-			}
-			mConnectionState = newState;
-		}
+    private class MainPagerAdapter extends FragmentStateAdapter {
 
-		if (!mTabsActive) {
-			// NOTE: addTab may cause mLastTab to change, so cache the value here
-			int lastTab = mLastTab;
-			for (TabContainer tc : mTabList) {
-				mBar.addTab(tc.tab);
-				if (tc.idx == lastTab) {
-					mBar.selectTab(tc.tab);
-				}
-			}
-			mTabsActive = true;
-		}
-	}
+        private static final long ID_VPN_LIST = 0L;
+        private static final long ID_STATUS = 1L;
+        private static final long ID_LOG = 2L;
+        private static final long ID_FAQ = 3L;
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+        private boolean mShowingStatus = false;
 
-		mConn = new VPNConnector(this, true) {
-			@Override
-			public void onUpdate(OpenVpnService service) {
-				updateUI(service);
-			}
-		};
-	}
+        public MainPagerAdapter(AppCompatActivity activity) {
+            super(activity);
+        }
 
-	@Override
-	protected void onPause() {
-		mConn.stopActiveDialog();
-		mConn.unbind();
-		super.onPause();
-	}
+        public void notifyTab0Changed() {
+            mShowingStatus = (mConnectionState != OpenConnectManagementThread.STATE_DISCONNECTED);
+            notifyItemChanged(0);
+        }
 
-	protected class TabContainer implements ActionBar.TabListener {
-		private Fragment mFragment;
-		private boolean mActive;
-		public Tab tab;
-		public int idx;
+        @Override
+        public int getItemCount() {
+            return 3;
+        }
 
-		public void replace(int titleResId, Fragment frag) {
-			if (mActive) {
-				getFragmentManager().beginTransaction().remove(mFragment).commit();
-			}
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0:
+                    return mShowingStatus ? new StatusFragment() : new VPNProfileList();
+                case 1:
+                    return new LogFragment();
+                case 2:
+                    return new FaqFragment();
+                default:
+                    return new VPNProfileList();
+            }
+        }
 
-			mFragment = frag;
-			tab.setText(titleResId);
-
-			if (idx == mLastTab) {
-				getFragmentManager().beginTransaction()
-					.setCustomAnimations(R.animator.fade_in, R.animator.fade_out)
-					.replace(android.R.id.content, mFragment)
-					.commit();
-				mActive = true;
-			} else {
-				mActive = false;
-			}
-		}
-
-		public TabContainer(int idx, int titleResId, Fragment frag) {
-			this.idx = idx;
-			this.mFragment = frag;
-			tab = getActionBar().newTab()
-					.setText(titleResId)
-					.setTabListener(this);
-		}
-
-		@Override
-		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			if (mTabsActive) {
-				if (idx < mLastTab) {
-					ft.setCustomAnimations(R.animator.fragment_slide_right_enter,
-							R.animator.fragment_slide_right_exit);
-				} else if (idx > mLastTab) {
-					ft.setCustomAnimations(R.animator.fragment_slide_left_enter,
-							R.animator.fragment_slide_left_exit);
-				}
-			}
-
-			mLastTab = idx;
-			ft.replace(android.R.id.content, mFragment);
-			mActive = true;
-		}
-
-		@Override
-		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-			if (mActive) {
-				ft.remove(mFragment);
-				mActive = false;
-			}
-		}
-
-		@Override
-		public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		}
-	}
+        @Override
+        public long getItemId(int position) {
+            if (position == 0) {
+                return mShowingStatus ? ID_STATUS : ID_VPN_LIST;
+            }
+            return position + 2L;
+        }
+    }
 }

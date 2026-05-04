@@ -75,8 +75,13 @@ public abstract class VPNConnector {
 				}
 			}
 		};
-		mContext.registerReceiver(mReceiver, new IntentFilter(
-				OpenVpnService.ACTION_VPN_STATUS));
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+			mContext.registerReceiver(mReceiver, new IntentFilter(
+					OpenVpnService.ACTION_VPN_STATUS), Context.RECEIVER_EXPORTED);
+		} else {
+			mContext.registerReceiver(mReceiver, new IntentFilter(
+					OpenVpnService.ACTION_VPN_STATUS));
+		}
 		mOwnerName = mContext.getClass().getSimpleName();
 
     	mStatsHandler = new Handler();

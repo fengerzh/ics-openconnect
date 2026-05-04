@@ -239,6 +239,13 @@ public class OpenConnectManagementThread implements Runnable, OpenVPNManagement 
 			if (response == OC_FORM_RESULT_OK) {
 				setState(STATE_AUTHENTICATING);
 				mLastFormDigest = h.getFormDigest();
+				/* Clear any stale cancel signal from disconnect button pressed
+				   while the auth dialog was showing */
+				synchronized (mMainloopLock) {
+					if (mOC != null) {
+						mOC.resetCancel();
+					}
+				}
 			} else if (response == OC_FORM_RESULT_NEWGROUP) {
 				log("AUTH: requesting authgroup change " +
 						(mAuthgroupSet ? "(interactive)" : "(non-interactive)"));
@@ -701,7 +708,8 @@ public class OpenConnectManagementThread implements Runnable, OpenVPNManagement 
 			return false;
 		}
 
-		if (mOC.parseURL(mServerAddr) != 0) {
+		int parseResult = mOC.parseURL(mServerAddr);
+		if (parseResult != 0) {
 			log("Error parsing server address");
 			errorAlert(mContext.getString(R.string.error_invalid_hostname, mServerAddr));
 			return false;

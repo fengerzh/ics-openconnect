@@ -43,6 +43,7 @@
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal"
                 android:singleLine="true"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>

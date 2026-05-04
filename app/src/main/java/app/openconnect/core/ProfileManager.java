@@ -65,19 +65,22 @@ public class ProfileManager {
 
 		File prefsdir = new File(context.getApplicationInfo().dataDir, "shared_prefs");
 	    if (prefsdir.exists() && prefsdir.isDirectory()) {
-	    	for (String s : prefsdir.list()) {
-	    		if (s.startsWith(PROFILE_PFX)) {
-	    			SharedPreferences p = context.getSharedPreferences(s.replaceFirst(".xml", ""),
-	    					Activity.MODE_PRIVATE);
-	    			VpnProfile entry = new VpnProfile(p);
-	    			if (!entry.isValid()) {
-	    				Log.w(TAG, "removing bogus profile '" + s + "'");
-	    				File f = new File(s);
-	    				f.delete();
-	    			} else {
-	    				mProfiles.put(entry.getUUIDString(), entry);
-	    			}
-	    		}
+	    	String[] files = prefsdir.list();
+	    	if (files != null) {
+		    	for (String s : files) {
+		    		if (s.startsWith(PROFILE_PFX)) {
+		    			SharedPreferences p = context.getSharedPreferences(s.replaceFirst(".xml", ""),
+		    					Activity.MODE_PRIVATE);
+		    			VpnProfile entry = new VpnProfile(p);
+		    			if (!entry.isValid()) {
+		    				Log.w(TAG, "removing bogus profile '" + s + "'");
+		    				File f = new File(s);
+		    				f.delete();
+		    			} else {
+		    				mProfiles.put(entry.getUUIDString(), entry);
+		    			}
+		    		}
+		    	}
 	    	}
 	    }
 	}

@@ -165,7 +165,7 @@ public class OpenVpnService extends VpnService {
 		intent.setAction(Intent.ACTION_MAIN);
 		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-		PendingIntent startLW = PendingIntent.getActivity(this, 0, intent, 0);
+		PendingIntent startLW = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 		return startLW;
 	}
 
@@ -177,7 +177,11 @@ public class OpenVpnService extends VpnService {
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		filter.addAction(Intent.ACTION_SCREEN_ON);
 		mDeviceStateReceiver = new DeviceStateReceiver(management, mPrefs);
-		registerReceiver(mDeviceStateReceiver, filter);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+			registerReceiver(mDeviceStateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+		} else {
+			registerReceiver(mDeviceStateReceiver, filter);
+		}
 	}
 
 	private synchronized void registerKeepAlive() {
@@ -209,7 +213,11 @@ public class OpenVpnService extends VpnService {
 
 		IntentFilter filter = new IntentFilter(KeepAlive.ACTION_KEEPALIVE_ALARM);
 		mKeepAlive = new KeepAlive(idle, DNSServer, mDeviceStateReceiver);
-		registerReceiver(mKeepAlive, filter);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+			registerReceiver(mKeepAlive, filter, Context.RECEIVER_NOT_EXPORTED);
+		} else {
+			registerReceiver(mKeepAlive, filter);
+		}
 		mKeepAlive.start(this);
 	}
 
@@ -256,6 +264,16 @@ public class OpenVpnService extends VpnService {
 		if (mUUID == null) {
 			return START_NOT_STICKY;
 		}
+
+		// If the VPN thread is already running for the same profile,
+		// don't restart it (which would kill the current auth dialog)
+		String currentUUID = mPrefs.getString("service_mUUID", "");
+		if (mVPN != null && mVPNThread != null && mVPNThread.isAlive() &&
+				mUUID.equals(currentUUID)) {
+			Log.i(TAG, "VPN thread already running for this profile, not restarting");
+			return START_NOT_STICKY;
+		}
+
 		mPrefs.edit().putString("service_mUUID", mUUID).apply();
 
 		profile = ProfileManager.get(mUUID);

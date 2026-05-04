@@ -24,7 +24,6 @@
 
 package app.openconnect.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -36,6 +35,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+
 import app.openconnect.R;
 import app.openconnect.core.OpenConnectManagementThread;
 import app.openconnect.core.OpenVpnService;
@@ -64,14 +66,14 @@ public class StatusFragment extends Fragment {
 			public void onClick(View arg0) {
 				if (mConn.service.getConnectionState() ==
 						OpenConnectManagementThread.STATE_DISCONNECTED) {
-					mConn.service.startReconnectActivity(getActivity());
+					mConn.service.startReconnectActivity(requireActivity());
 				} else {
 					mConn.service.stopVPN();
 				}
 			}
     	});
 
-    	mConn = new VPNConnector(getActivity(), false) {
+    	mConn = new VPNConnector(requireContext(), false) {
 			@Override
 			public void onUpdate(OpenVpnService service) {
 				updateUI(service);
@@ -89,7 +91,7 @@ public class StatusFragment extends Fragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		mDropdown = new CommonMenu(getActivity(), menu, true);
+		mDropdown = new CommonMenu(requireActivity(), menu, true);
 	}
 
 	@Override

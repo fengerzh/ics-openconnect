@@ -27,7 +27,6 @@
 package app.openconnect.fragments;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -46,6 +45,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
+
+import androidx.fragment.app.Fragment;
+
 import app.openconnect.R;
 import app.openconnect.core.OpenConnectManagementThread;
 import app.openconnect.core.OpenVpnService;
@@ -53,7 +55,7 @@ import app.openconnect.core.VPNConnector;
 import app.openconnect.core.VPNLog;
 import app.openconnect.core.VPNLog.LogArrayAdapter;
 
-public class LogFragment extends ListFragment {
+public class LogFragment extends Fragment {
 	public static final String TAG = "OpenConnect";
 
 	private VPNConnector mConn;
@@ -93,7 +95,7 @@ public class LogFragment extends ListFragment {
     @Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.logmenu, menu);
-		mDropdown = new CommonMenu(getActivity(), menu, true);
+		mDropdown = new CommonMenu(requireActivity(), menu, true);
 		mCancelButton = menu.findItem(R.id.cancel);
 		if (mConn != null) {
 			updateUI(mConn.service);
@@ -133,7 +135,7 @@ public class LogFragment extends ListFragment {
     			mLogView.setSelection(mLogAdapter.getCount());
     		}
 
-    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
     		mLogAdapter.setTimeFormat(prefs.getString("timestamp_format", VPNLog.DEFAULT_TIME_FORMAT));
     	}
     }
@@ -171,7 +173,7 @@ public class LogFragment extends ListFragment {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.logwindow, container, false);
 
-		mActivity = getActivity();
+		mActivity = requireActivity();
 
 		mLogView = (ListView)v.findViewById(android.R.id.list);
 		mLogView.setOnItemLongClickListener(new OnItemLongClickListener() {

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="app.openconnect" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,17 +10,12 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
-
     <!-- Copy the <permission> block to your app when using the REMOTE API. Otherwise OpenConnect
         needs to be installed first -->
     <permission
         android:name="app.openconnect.REMOTE_API"
         android:description="@string/permission_description"
         android:label="Control OpenConnect"
-        android:permissionGroup="android.permission-group.NETWORK"
         android:protectionLevel="dangerous" />
 
     <application
@@ -29,11 +23,14 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app"
         android:supportsRtl="true"
+        android:theme="@style/Theme.OpenConnect"
         android:name="app.openconnect.Application" >
         <activity
-            android:name=".ConnectionEditorActivity" />
+            android:name=".ConnectionEditorActivity"
+            android:theme="@style/Theme.OpenConnect.WithActionBar" />
         <activity
-            android:name=".FragActivity" />
+            android:name=".FragActivity"
+            android:theme="@style/Theme.OpenConnect.WithActionBar" />
         <activity
             android:name=".TokenImportActivity"
             android:exported="true" >
@@ -84,10 +81,11 @@
             </intent-filter>
 
             </activity>
-        <activity android:name=".FileSelect" />
+        <activity android:name=".FileSelect"
+            android:theme="@style/Theme.OpenConnect.WithActionBar" />
         <activity
             android:name=".MainActivity"
-            android:uiOptions="splitActionBarWhenNarrow"
+            android:exported="true"
             tools:ignore="ExportedActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -99,13 +97,14 @@
 
         <activity
             android:name="org.acra.CrashReportDialog"
-            android:theme="@android:style/Theme.Dialog"
+            android:theme="@style/Theme.Material3.Light.Dialog"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true" />
 
         <service
             android:name="app.openconnect.core.OpenVpnService"
+            android:exported="false"
             android:permission="android.permission.BIND_VPN_SERVICE" >
             <intent-filter>
                 <action android:name="android.net.VpnService" />
@@ -123,20 +122,23 @@
 
         <activity
             android:permission="app.openconnect.REMOTE_API"
-            android:name=".api.GrantPermissionsActivity">
+            android:name=".api.GrantPermissionsActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
             android:permission="app.openconnect.REMOTE_API"
-            android:name=".api.ConfirmDialog" >
+            android:name=".api.ConfirmDialog"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".OnBootReceiver" >
+        <receiver android:name=".OnBootReceiver"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
