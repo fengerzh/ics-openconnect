@@ -98,7 +98,7 @@ public class ProfileManager {
 		return PROFILE_PFX + uuid;
 	}
 
-	private static String capitalize(String in) {
+	static String capitalize(String in) {
 		if (in.length() <= 4) {
 			// These are almost always abbreviations
 			return in.toUpperCase(Locale.getDefault());
@@ -108,7 +108,7 @@ public class ProfileManager {
 		}
 	}
 
-	private static String makeProfName(String s, int index) {
+	static String makeProfName(String s, int index) {
 		String orig = s;
 		String suffix;
 

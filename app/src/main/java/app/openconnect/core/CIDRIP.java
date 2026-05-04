@@ -56,7 +56,7 @@ class CIDRIP{
 		len = prefixLen;
 	}
 
-	private static int maskToLen(String mask) {
+	static int maskToLen(String mask) {
 		long netmask=getInt(mask);
 
 		// Add 33. bit to ensure the loop terminates

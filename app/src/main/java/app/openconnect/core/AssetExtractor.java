@@ -53,7 +53,7 @@ public class AssetExtractor {
 
 	private static final int BUFLEN = 65536;
 
-    private static long crc32(File f)
+    static long crc32(File f)
     		throws FileNotFoundException, IOException {
         FileInputStream in = new FileInputStream(f);
         CRC32 crcMaker = new CRC32();
@@ -70,7 +70,7 @@ public class AssetExtractor {
         return crcMaker.getValue();
     }
 
-    private static void writeStream(InputStream in, File file)
+    static void writeStream(InputStream in, File file)
     		throws FileNotFoundException, IOException {
     	FileOutputStream out = new FileOutputStream(file);
 
@@ -86,7 +86,7 @@ public class AssetExtractor {
     	out.close();
     }
 
-    private static String getArch() {
+    static String getArch() {
         String prop = System.getProperty("os.arch");
         if (prop.contains("aarch64")) {
             return "arm64-v8a";
@@ -148,7 +148,7 @@ public class AssetExtractor {
 		return extractAll(ctx, 0, null);
 	}
 
-	private static String readAndClose(Reader reader)
+	static String readAndClose(Reader reader)
 			throws UnsupportedEncodingException, IOException {
 		StringWriter sw = new StringWriter();
     	char[] buffer = new char[BUFLEN];

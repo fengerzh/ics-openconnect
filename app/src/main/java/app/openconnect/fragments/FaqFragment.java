@@ -44,7 +44,7 @@ import app.openconnect.core.AssetExtractor;
 
 public class FaqFragment extends Fragment  {
 
-	private String htmlEncode(String in) {
+	String htmlEncode(String in) {
 		in = TextUtils.htmlEncode(in).replace("\n", "<br>");
 
 		// match markdown-formatted links: [link text](http://foo.bar.com)

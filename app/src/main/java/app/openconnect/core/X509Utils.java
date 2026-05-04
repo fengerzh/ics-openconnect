@@ -26,7 +26,6 @@
 package app.openconnect.core;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import app.openconnect.R;
 import app.openconnect.VpnProfile;
@@ -82,7 +81,7 @@ public class X509Utils {
 
 
 	public static String getCertificateFriendlyName (Context c, String filename) {
-		if(!TextUtils.isEmpty(filename)) {
+		if(filename != null && !filename.isEmpty()) {
 			try {
 				X509Certificate cert = (X509Certificate) getCertificateFromFile(filename);
 
@@ -145,7 +144,7 @@ public class X509Utils {
                 parts[i] = "email=" + ia5decode(part.replace("1.2.840.113549.1.9.1=#16", ""));
             }
         }
-        friendlyName = TextUtils.join(",", parts);
+        friendlyName = String.join(",", parts);
         return friendlyName;
     }
 
@@ -156,7 +155,7 @@ public class X509Utils {
                 block != Character.UnicodeBlock.SPECIALS;
     }
 
-    private static String ia5decode(String ia5string) {
+    static String ia5decode(String ia5string) {
         String d = "";
         for (int i=1;i<ia5string.length();i=i+2) {
             String hexstr = ia5string.substring(i-1,i+1);

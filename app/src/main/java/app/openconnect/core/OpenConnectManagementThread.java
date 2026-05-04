@@ -305,7 +305,7 @@ public class OpenConnectManagementThread implements Runnable, OpenVPNManagement 
 	}
 
 	/* if the wrapper script starts with "#!/path/to/nonexistent/file", use /system/bin/sh instead */
-	private boolean rewriteShell(String s) {
+	static boolean rewriteShell(String s) {
 		Matcher m = Pattern.compile("^#![ \\t]*(/\\S+)[ \\t\\n]").matcher(s);
 		if (!m.find()) {
 			return false;
@@ -318,7 +318,7 @@ public class OpenConnectManagementThread implements Runnable, OpenVPNManagement 
 		return true;
 	}
 
-	private byte[] decodeBase64(String in)
+	byte[] decodeBase64(String in)
 			throws IllegalArgumentException {
 		// android.util.Base64.Decoder.process() only validates the padding, so it
 		// cannot be relied upon to distinguish real base64 from e.g. a PEM cert string

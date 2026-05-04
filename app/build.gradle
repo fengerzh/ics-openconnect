@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'jacoco'
 }
 
 android {
@@ -39,6 +40,14 @@ android {
             debuggable = true
         }
     }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
     lint {
         disable += ['MissingTranslation', 'ExtraTranslation']
     }
@@ -59,6 +68,38 @@ android {
     }
 }
 
+tasks.withType(Test).configureEach {
+    jacoco {
+        includeNoLocationClasses = true
+        excludes = ['jdk.internal.*']
+    }
+}
+
+tasks.register('jacocoTestReport', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    def excludePatterns = [
+        'app/openconnect/R.class',
+        'app/openconnect/R$*.class',
+        'app/openconnect/BuildConfig.class',
+        '**/com/stericson/**',
+        '**/org/spongycastle/**',
+        '**/org/infradead/**'
+    ]
+    classDirectories.setFrom(files([
+        fileTree(dir: "${buildDir}/intermediates/javac/debug/compileDebugJavaWithJavac/classes", excludes: excludePatterns)
+    ]))
+    sourceDirectories.setFrom(files([
+        "${project.projectDir}/src/main/java"
+    ]))
+    executionData.setFrom(files([
+        "${buildDir}/jacoco/testDebugUnitTest.exec"
+    ]))
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.7.0'
@@ -66,7 +107,14 @@ dependencies {
     implementation 'androidx.fragment:fragment:1.8.6'
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    implementation 'androidx.preference:preference:1.2.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.11.4'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.14.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
