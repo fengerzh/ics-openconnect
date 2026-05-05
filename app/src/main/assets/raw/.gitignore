@@ -1,2 +1,6 @@
-armeabi/
-x86/
+# Keep only shared scripts in git.
+# Architecture-specific binaries are local build outputs.
+*
+!.gitignore
+!noarch/
+!noarch/**

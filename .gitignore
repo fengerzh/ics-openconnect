@@ -1,9 +1,25 @@
+# IDE
 *.iml
-/.gradle/
-/local.properties
 /.idea/
+/local.properties
+.externalNativeBuild
+.*.sw*
+
+# macOS
+.DS_Store
+
+# Gradle
+/.gradle/
 /build/
 /app/build/
 /captures
-.externalNativeBuild
-.*.sw*
+
+# Local native build outputs
+/build-deps/
+/curl
+/libopenconnect.so
+/libstoken.so
+/run_pie
+
+# Local design references
+/openconnect-new-design.png

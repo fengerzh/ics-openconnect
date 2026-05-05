@@ -1,1 +1,3 @@
-*.so
+# Native libraries in this directory are generated locally.
+*
+!.gitignore
