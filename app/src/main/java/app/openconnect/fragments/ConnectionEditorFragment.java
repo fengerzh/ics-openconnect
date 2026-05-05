@@ -42,7 +42,6 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Context;
@@ -53,7 +52,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
-public class ConnectionEditorFragment extends PreferenceFragment
+public class ConnectionEditorFragment extends StyledPreferenceFragment
 		implements OnSharedPreferenceChangeListener {
 
 	PreferenceManager mPrefs;
@@ -77,6 +76,7 @@ public class ConnectionEditorFragment extends PreferenceFragment
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.pref_openconnect);
+        applyPreferenceCardLayouts();
         setClickListeners();
 
         SharedPreferences sp = mPrefs.getSharedPreferences();

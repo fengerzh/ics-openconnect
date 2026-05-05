@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,18 +37,31 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowInsetsController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import app.openconnect.core.AssetExtractor;
 import app.openconnect.core.ProfileManager;
+
+import com.google.android.material.appbar.MaterialToolbar;
+
 import org.stoken.LibStoken;
 
-public class TokenImportActivity extends Activity {
+public class TokenImportActivity extends AppCompatActivity {
 
 	public static final String TAG = "OpenConnect";
 
@@ -79,10 +91,14 @@ public class TokenImportActivity extends Activity {
 	private VpnProfile mProfile;
 	private LibStoken mStoken;
 	private List<VpnProfile> mVpnProfileList;
+	private ViewGroup mContentContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_subpage_host);
+		setupChrome();
+		mContentContainer = findViewById(R.id.fragment_container);
 
         mStoken = new LibStoken();
 
@@ -139,9 +155,43 @@ public class TokenImportActivity extends Activity {
         }
     }
 
+	private void setupChrome() {
+		getWindow().setStatusBarColor(getColor(R.color.oc_surface_background));
+		getWindow().setNavigationBarColor(getColor(R.color.oc_surface_background));
+		WindowInsetsController insetsController = getWindow().getInsetsController();
+		if (insetsController != null) {
+			int appearance = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+					| WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+			insetsController.setSystemBarsAppearance(appearance, appearance);
+		}
+
+		MaterialToolbar toolbar = findViewById(R.id.toolbar);
+		toolbar.setNavigationIcon(R.drawable.ic_oc_back);
+		toolbar.setNavigationIconTint(getColor(R.color.oc_text_primary));
+		toolbar.setOverflowIcon(AppCompatResources.getDrawable(this, R.drawable.ic_oc_more_vertical));
+		toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+		setSupportActionBar(toolbar);
+		setTitle(R.string.securid_info);
+
+		ViewCompat.setOnApplyWindowInsetsListener(
+				findViewById(R.id.subpage_root), (v, insets) -> {
+					v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+							0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
+					return insets;
+				});
+	}
+
+	private void inflateScreen(int layoutResId, int titleResId) {
+		mContentContainer.removeAllViews();
+		LayoutInflater.from(this).inflate(layoutResId, mContentContainer, true);
+		setTitle(titleResId);
+	}
+
     private void setupCommonButtons(boolean allowCancel, boolean isLast, View.OnClickListener nextAction) {
+		Button cancel = findViewById(R.id.cancel_button);
+		cancel.setVisibility(allowCancel ? View.VISIBLE : View.GONE);
     	if (allowCancel) {
-			((Button)findViewById(R.id.cancel_button)).setOnClickListener(new View.OnClickListener() {
+			cancel.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					cancel();
@@ -152,11 +202,14 @@ public class TokenImportActivity extends Activity {
     	next.setOnClickListener(nextAction);
     	if (isLast) {
     		next.setText(R.string.finish);
+    	} else {
+			next.setText(R.string.next);
     	}
+		next.setAlpha(next.isEnabled() ? 1.0f : 0.5f);
     }
 
     private void setupEnterTokenScreen() {
-		setContentView(R.layout.token_string);
+		inflateScreen(R.layout.token_string, R.string.token_string);
 
 		((EditText)findViewById(R.id.token_string_entry)).setText(mTokenString);
 
@@ -195,7 +248,7 @@ public class TokenImportActivity extends Activity {
     }
 
     private void setupUnlockTokenScreen() {
-    	setContentView(R.layout.token_unlock);
+    	inflateScreen(R.layout.token_unlock, R.string.token_unlock_title);
 
     	if (mStoken.importString(mTokenString) != LibStoken.SUCCESS) {
     		// should never happen, as it passed in the previous screen
@@ -249,6 +302,7 @@ public class TokenImportActivity extends Activity {
 
     	Button b = (Button)findViewById(R.id.next_button);
     	b.setEnabled(allowFinish);
+		b.setAlpha(allowFinish ? 1.0f : 0.5f);
 
     	int visibility = enableEntry ? View.VISIBLE : View.INVISIBLE;
     	entryLabel.setVisibility(visibility);
@@ -321,7 +375,7 @@ public class TokenImportActivity extends Activity {
     }
 
     private void setupSelectProfileScreen() {
-    	setContentView(R.layout.token_profile);
+    	inflateScreen(R.layout.token_profile, R.string.token_profile_title);
 
     	if (mStoken.importString(mTokenString) != LibStoken.SUCCESS ||
     	    mStoken.decryptSeed(mTokenPassword, mTokenDevID) != LibStoken.SUCCESS) {
@@ -522,7 +576,7 @@ public class TokenImportActivity extends Activity {
     		return;
     	}
 
-    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	AlertDialog.Builder builder = UiDialogs.builder(this);
     	if (newAlert == ALERT_BAD_TOKEN) {
     		builder.setTitle(R.string.token_bad_string_title);
     		builder.setMessage(R.string.token_bad_string_summary);

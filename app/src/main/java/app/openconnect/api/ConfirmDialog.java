@@ -17,8 +17,6 @@
 package app.openconnect.api;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnShowListener;
 import android.content.pm.ApplicationInfo;
@@ -30,6 +28,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import app.openconnect.R;
+import app.openconnect.UiDialogs;
+
+import androidx.appcompat.app.AlertDialog;
 
 
 public class ConfirmDialog extends Activity implements
@@ -63,7 +64,7 @@ CompoundButton.OnCheckedChangeListener, DialogInterface.OnClickListener {
 			((CompoundButton) view.findViewById(R.id.check)).setOnCheckedChangeListener(this);
 
 
-			Builder builder = new AlertDialog.Builder(this);
+			AlertDialog.Builder builder = UiDialogs.builder(this);
 
 			builder.setView(view);
 
@@ -123,4 +124,3 @@ CompoundButton.OnCheckedChangeListener, DialogInterface.OnClickListener {
 	}
 
 }
-

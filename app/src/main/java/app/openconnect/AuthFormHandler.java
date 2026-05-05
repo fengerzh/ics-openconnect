@@ -32,7 +32,6 @@ import org.infradead.libopenconnect.LibOpenConnect;
 
 import app.openconnect.core.UserDialog;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -50,6 +49,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 public class AuthFormHandler extends UserDialog
 		implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
@@ -474,7 +475,7 @@ public class AuthFormHandler extends UserDialog
 			return;
 		}
 
-		mAlert = new AlertDialog.Builder(mContext)
+		mAlert = UiDialogs.builder(mContext)
 				.setView(v)
 				.setTitle(mContext.getString(R.string.login_title, getStringPref("profile_name")))
 				.setPositiveButton(R.string.ok, h)

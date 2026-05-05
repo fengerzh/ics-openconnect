@@ -24,10 +24,13 @@
 
 package app.openconnect.core;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+
+import androidx.appcompat.app.AlertDialog;
+
+import app.openconnect.UiDialogs;
 
 public class ErrorDialog extends UserDialog
 	implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
@@ -46,7 +49,7 @@ public class ErrorDialog extends UserDialog
 	@Override
 	public void onStart(Context context) {
 		super.onStart(context);
-		mAlert = new AlertDialog.Builder(context)
+		mAlert = UiDialogs.builder(context)
 			.setTitle(mTitle)
 			.setMessage(mMessage)
 			.setPositiveButton(android.R.string.ok, this)

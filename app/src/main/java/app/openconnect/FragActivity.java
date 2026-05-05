@@ -27,10 +27,14 @@ package app.openconnect;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowInsetsController;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class FragActivity extends AppCompatActivity {
 
@@ -43,12 +47,31 @@ public class FragActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_subpage_host);
+
+        getWindow().setStatusBarColor(getColor(R.color.oc_surface_background));
+        getWindow().setNavigationBarColor(getColor(R.color.oc_surface_background));
+        WindowInsetsController insetsController = getWindow().getInsetsController();
+        if (insetsController != null) {
+            int appearance = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+            insetsController.setSystemBarsAppearance(appearance, appearance);
+        }
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_oc_back);
+        toolbar.setNavigationIconTint(getColor(R.color.oc_text_primary));
+        toolbar.setOverflowIcon(AppCompatResources.getDrawable(this, R.drawable.ic_oc_more_vertical));
+        toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        setSupportActionBar(toolbar);
+
+        String fragName = getIntent().getStringExtra(EXTRA_FRAGMENT_NAME);
+        setTitle(resolveTitle(fragName));
 
         if(savedInstanceState == null) {
             try {
-                String fragName = getIntent().getStringExtra(EXTRA_FRAGMENT_NAME);
                 Fragment frag = (Fragment)Class.forName(FRAGMENT_PREFIX + fragName).newInstance();
-                getFragmentManager().beginTransaction().add(android.R.id.content, frag).commit();
+                getFragmentManager().beginTransaction().add(R.id.fragment_container, frag).commit();
             } catch (Exception e) {
                 Log.e(TAG, "unable to create fragment", e);
                 finish();
@@ -58,11 +81,25 @@ public class FragActivity extends AppCompatActivity {
         // Apply system bar insets as padding so content doesn't extend
         // behind status/nav bars on Android 15+ edge-to-edge.
         ViewCompat.setOnApplyWindowInsetsListener(
-                findViewById(android.R.id.content), (v, insets) -> {
+                findViewById(R.id.subpage_root), (v, insets) -> {
                     v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
                             0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
                     return insets;
                 });
+    }
+
+    private int resolveTitle(String fragName) {
+        if ("AboutFragment".equals(fragName)) {
+            return R.string.about_openconnect;
+        } else if ("GeneralSettings".equals(fragName)) {
+            return R.string.generalsettings;
+        } else if ("TokenParentFragment".equals(fragName)) {
+            return R.string.securid_info;
+        } else if ("FeedbackFragment".equals(fragName)) {
+            return R.string.report_problem;
+        } else {
+            return R.string.app;
+        }
     }
 
 }

@@ -27,10 +27,10 @@
         android:name="app.openconnect.Application" >
         <activity
             android:name=".ConnectionEditorActivity"
-            android:theme="@style/Theme.OpenConnect.WithActionBar" />
+            android:theme="@style/Theme.OpenConnect" />
         <activity
             android:name=".FragActivity"
-            android:theme="@style/Theme.OpenConnect.WithActionBar" />
+            android:theme="@style/Theme.OpenConnect" />
         <activity
             android:name=".TokenImportActivity"
             android:exported="true" >
@@ -82,7 +82,7 @@
 
             </activity>
         <activity android:name=".FileSelect"
-            android:theme="@style/Theme.OpenConnect.WithActionBar" />
+            android:theme="@style/Theme.OpenConnect" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

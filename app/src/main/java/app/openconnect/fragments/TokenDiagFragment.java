@@ -31,7 +31,6 @@ import java.util.TimeZone;
 import org.stoken.LibStoken;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -54,9 +53,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import app.openconnect.R;
+import app.openconnect.UiDialogs;
 import app.openconnect.VpnProfile;
 import app.openconnect.core.FragCache;
 import app.openconnect.core.ProfileManager;
+
+import androidx.appcompat.app.AlertDialog;
 
 public class TokenDiagFragment extends Fragment {
 
@@ -294,7 +296,7 @@ public class TokenDiagFragment extends Fragment {
 		tv.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		tv.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
-    	AlertDialog.Builder builder = new AlertDialog.Builder(ctx)
+    	AlertDialog.Builder builder = UiDialogs.builder(ctx)
     		.setView(tv)
     		.setTitle(R.string.enter_pin)
     		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

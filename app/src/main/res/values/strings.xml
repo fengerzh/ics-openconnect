@@ -3,6 +3,8 @@
 <resources>
 
     <string name="app">OpenConnect</string>
+    <string name="app_tagline">Secure · Stable · Efficient</string>
+    <string name="main_header_nav">Main navigation</string>
     <string name="permission_description">Allows another app to control OpenConnect</string>
     <string name="location">Location</string>
     <string name="cant_read_folder">Unable to read directory</string>
@@ -106,6 +108,28 @@
     <string name="notification_input_needed">User input needed</string>
     <string name="notification_touch_here">Touch here to jump to OpenConnect</string>
     <string name="state_connected_to">Connected to %1$s</string>
+    <string name="status_runtime">Uptime</string>
+    <string name="status_network_details">Network Details</string>
+    <string name="status_tx_title">Send (TX)</string>
+    <string name="status_tx_subtitle">Upload speed</string>
+    <string name="status_rx_title">Receive (RX)</string>
+    <string name="status_rx_subtitle">Download speed</string>
+    <string name="status_server_title">Server Address</string>
+    <string name="status_server_subtitle">Remote server</string>
+    <string name="status_ipv4_title">Local IPv4 Address</string>
+    <string name="status_ipv4_subtitle">IPv4 address</string>
+    <string name="status_netmask_title">Subnet Mask</string>
+    <string name="status_netmask_subtitle">IPv4 subnet mask</string>
+    <string name="status_ipv6_title">Local IPv6 Address</string>
+    <string name="status_ipv6_subtitle">IPv6 address</string>
+    <string name="vpn_profiles_intro_title">VPN Profiles</string>
+    <string name="vpn_profiles_intro_subtitle">Select a profile to connect, or open its settings to edit it.</string>
+    <string name="vpn_profiles_empty_title">No profiles yet</string>
+    <string name="vpn_profiles_empty_subtitle">Use the add button in the top bar to create your first VPN profile.</string>
+    <string name="vpn_profile_item_hint">Tap to connect</string>
+    <string name="log_intro_title">Connection Log</string>
+    <string name="log_intro_subtitle">Realtime status and diagnostic messages</string>
+    <string name="faq_intro_subtitle">Setup, authentication, compatibility, and troubleshooting guidance</string>
     <string name="error_connection_failed">Connection failed</string>
     <string name="error_invalid_hostname">Invalid hostname \'%1$s\'</string>
     <string name="error_cant_connect">Error connecting to host \'%1$s\'. See log for details.</string>
@@ -152,9 +176,11 @@
     <string name="token_bad_devid_summary">The supplied device ID is not suitable for this token.  Please check for errors and resubmit.</string>
     <string name="token_bad_password_title">Password is not valid</string>
     <string name="token_bad_password_summary">The supplied password is not suitable for this token.  Please check for errors and resubmit.</string>
+    <string name="token_unlock_title">Unlock token</string>
     <string name="import_from_file">Import from file&#8230;</string>
     <string name="clear_token">Clear token</string>
     <string name="choose_existing_vpn">Select the VPN profile that will be used with this token, or add a new one:</string>
+    <string name="token_profile_title">Assign token to profile</string>
     <string name="new_vpn_option">Add new VPN profile&#8230;</string>
     <string name="clear_saved_passwords">Clear saved passwords</string>
     <string name="clear_saved_passwords_confirm">Are you sure you want to erase all stored credentials?</string>

@@ -59,6 +59,10 @@ public class VPNLogItem implements Serializable {
 		return pfx + mMsg;
 	}
 
+	public int getLevel() {
+		return mLevel;
+	}
+
 	public String toString() {
 		return format(null, "long");
 	}

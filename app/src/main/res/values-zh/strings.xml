@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app">OpenConnect</string>
+  <string name="app_tagline">安全 · 稳定 · 高效</string>
+  <string name="main_header_nav">主导航</string>
   <string name="permission_description">允许另一个应用程序来控制 OpenConnect</string>
   <string name="location">位置</string>
   <string name="cant_read_folder">无法读取目录</string>
@@ -90,6 +92,28 @@
   <string name="notification_input_needed">需要用户输入</string>
   <string name="notification_touch_here">触摸此处跳转至 OpenConnect</string>
   <string name="state_connected_to">连接至 %1$s</string>
+  <string name="status_runtime">运行时间</string>
+  <string name="status_network_details">网络详情</string>
+  <string name="status_tx_title">发送 (TX)</string>
+  <string name="status_tx_subtitle">上传速度</string>
+  <string name="status_rx_title">接收 (RX)</string>
+  <string name="status_rx_subtitle">下载速度</string>
+  <string name="status_server_title">服务器地址</string>
+  <string name="status_server_subtitle">远程服务器</string>
+  <string name="status_ipv4_title">本地 IPv4 地址</string>
+  <string name="status_ipv4_subtitle">IPv4 地址</string>
+  <string name="status_netmask_title">子网掩码</string>
+  <string name="status_netmask_subtitle">IPv4 子网掩码</string>
+  <string name="status_ipv6_title">本地 IPv6 地址</string>
+  <string name="status_ipv6_subtitle">IPv6 地址</string>
+  <string name="vpn_profiles_intro_title">VPN 配置</string>
+  <string name="vpn_profiles_intro_subtitle">选择一个配置即可发起连接，也可以进入设置继续编辑。</string>
+  <string name="vpn_profiles_empty_title">还没有配置</string>
+  <string name="vpn_profiles_empty_subtitle">使用顶部的添加按钮创建第一个 VPN 配置。</string>
+  <string name="vpn_profile_item_hint">点击即可连接</string>
+  <string name="log_intro_title">连接日志</string>
+  <string name="log_intro_subtitle">实时状态与诊断消息</string>
+  <string name="faq_intro_subtitle">覆盖配置、认证、兼容性与问题排查说明</string>
   <string name="error_connection_failed">连接失败</string>
   <string name="error_invalid_hostname">无效的主机名 \'%1$s\'</string>
   <string name="error_cant_connect">连接至主机 \'%1$s\' 时发生错误。查看日志了解详细信息。</string>
@@ -133,9 +157,11 @@
   <string name="token_bad_devid_summary">所提供的设备 ID 不适合此令牌。请检查错误并重新提交。</string>
   <string name="token_bad_password_title">密码无效</string>
   <string name="token_bad_password_summary">所提供的密码不适合此令牌。请检查错误并重新提交。</string>
+  <string name="token_unlock_title">解锁令牌</string>
   <string name="import_from_file">从文件导入...</string>
   <string name="clear_token">清除令牌</string>
   <string name="choose_existing_vpn">选择将与此令牌一起使用的 VPN 配置文件，或者添加一个新的：</string>
+  <string name="token_profile_title">绑定到 VPN 配置</string>
   <string name="new_vpn_option">添加新的 VPN 配置文件…</string>
   <string name="clear_saved_passwords">清除已保存密码</string>
   <string name="clear_saved_passwords_confirm">您确定要删除所有已存储的凭证吗？</string>

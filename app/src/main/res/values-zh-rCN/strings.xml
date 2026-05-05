@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="app">OpenConnect</string>
+  <string name="app_tagline">安全 · 稳定 · 高效</string>
+  <string name="main_header_nav">主导航</string>
   <string name="location">地点</string>
   <string name="cant_read_folder">无法读取目录</string>
   <string name="cancel">取消</string>
@@ -52,5 +54,28 @@
   <string name="no_external_app_allowed">没有允许使用外部 API 的应用</string>
   <string name="allowed_apps">已授权的应用：%s</string>
   <string name="clearappsdialog">清除已授权的应用列表？\n当前已授权的应用：\n\n%s</string>
+  <string name="state_connected_to">连接至 %1$s</string>
+  <string name="status_runtime">运行时间</string>
+  <string name="status_network_details">网络详情</string>
+  <string name="status_tx_title">发送 (TX)</string>
+  <string name="status_tx_subtitle">上传速度</string>
+  <string name="status_rx_title">接收 (RX)</string>
+  <string name="status_rx_subtitle">下载速度</string>
+  <string name="status_server_title">服务器地址</string>
+  <string name="status_server_subtitle">远程服务器</string>
+  <string name="status_ipv4_title">本地 IPv4 地址</string>
+  <string name="status_ipv4_subtitle">IPv4 地址</string>
+  <string name="status_netmask_title">子网掩码</string>
+  <string name="status_netmask_subtitle">IPv4 子网掩码</string>
+  <string name="status_ipv6_title">本地 IPv6 地址</string>
+  <string name="status_ipv6_subtitle">IPv6 地址</string>
+  <string name="vpn_profiles_intro_title">VPN 配置</string>
+  <string name="vpn_profiles_intro_subtitle">选择一个配置即可发起连接，也可以进入设置继续编辑。</string>
+  <string name="vpn_profiles_empty_title">还没有配置</string>
+  <string name="vpn_profiles_empty_subtitle">使用顶部的添加按钮创建第一个 VPN 配置。</string>
+  <string name="vpn_profile_item_hint">点击即可连接</string>
+  <string name="log_intro_title">连接日志</string>
+  <string name="log_intro_subtitle">实时状态与诊断消息</string>
+  <string name="faq_intro_subtitle">覆盖配置、认证、兼容性与问题排查说明</string>
   <!--OpenConnect preference strings-->
 </resources>

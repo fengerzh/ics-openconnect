@@ -1,2 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources/>
+<resources>
+  <string-array name="connection_states">
+    <item>未知</item>
+    <item>认证中</item>
+    <item>等待用户输入</item>
+    <item>已认证</item>
+    <item>连接中</item>
+    <item>已连接</item>
+    <item>未连接</item>
+  </string-array>
+</resources>

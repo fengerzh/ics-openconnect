@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TreeMap;
 
-import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -46,12 +45,15 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import app.openconnect.FileSelect;
 import app.openconnect.R;
+import app.openconnect.UiDialogs;
 
 public class FileSelectionFragment extends ListFragment {
 
 	private static final String ITEM_KEY = "key";
 	private static final String ITEM_IMAGE = "image";
 	private static final String ROOT = "/";
+	private static final String STATE_HIDE_IMPORT = "hideImport";
+	private static final String STATE_FORCE_IMPORT = "forceImport";
 
 
 	private List<String> path = null;
@@ -135,7 +137,18 @@ public class FileSelectionFragment extends ListFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null) {
+			mHideImport = savedInstanceState.getBoolean(STATE_HIDE_IMPORT, mHideImport);
+			mForceImport = savedInstanceState.getBoolean(STATE_FORCE_IMPORT, mForceImport);
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(STATE_HIDE_IMPORT, mHideImport);
+		outState.putBoolean(STATE_FORCE_IMPORT, mForceImport);
 	}
 
 	private void getDir(String dirPath) {
@@ -264,9 +277,10 @@ public class FileSelectionFragment extends ListFragment {
 				lastPositions.put(currentPath, position);
 				getDir(path.get(position));
 			} else {
-				new AlertDialog.Builder(getActivity())
-				.setTitle("[" + file.getName() + "] " + getText(R.string.cant_read_folder))
-				.setPositiveButton("OK", null).show();
+				UiDialogs.builder(getActivity())
+						.setTitle("[" + file.getName() + "] " + getText(R.string.cant_read_folder))
+						.setPositiveButton(android.R.string.ok, null)
+						.show();
 			}
 		} else {
 			selectedFile = file;
@@ -277,10 +291,18 @@ public class FileSelectionFragment extends ListFragment {
 
 	public void setNoInLine() {
 		mHideImport = true;
+		if (mInlineImport != null) {
+			mInlineImport.setVisibility(View.GONE);
+			mInlineImport.setChecked(false);
+		}
 	}
 
 	public void setForceInLine() {
 		mForceImport = true;
+		if (mInlineImport != null) {
+			mInlineImport.setEnabled(false);
+			mInlineImport.setChecked(true);
+		}
 	}
 
 }

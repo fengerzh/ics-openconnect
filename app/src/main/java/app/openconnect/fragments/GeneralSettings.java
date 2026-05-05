@@ -28,8 +28,6 @@ import java.io.File;
 import java.util.Map;
 
 import android.Manifest.permission;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -45,12 +43,12 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceFragment;
+import app.openconnect.UiDialogs;
 import app.openconnect.R;
 import app.openconnect.api.ExternalAppDatabase;
 import app.openconnect.core.DeviceStateReceiver;
 
-public class GeneralSettings extends PreferenceFragment
+public class GeneralSettings extends StyledPreferenceFragment
 		implements OnPreferenceClickListener, OnClickListener, OnSharedPreferenceChangeListener {
 
 	private ExternalAppDatabase mExtapp;
@@ -63,6 +61,7 @@ public class GeneralSettings extends PreferenceFragment
 
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.general_settings);
+		applyPreferenceCardLayouts();
 
 		Preference loadtun = findPreference("loadTunModule");
 		if(!isTunModuleAvailable())
@@ -161,11 +160,11 @@ public class GeneralSettings extends PreferenceFragment
 	@Override
 	public boolean onPreferenceClick(Preference preference) { 
 		if(preference.getKey().equals("clearapi")){
-			Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setPositiveButton(R.string.clear, this);
-			builder.setNegativeButton(android.R.string.cancel, null);
-			builder.setMessage(getString(R.string.clearappsdialog,getExtAppList("\n")));
-			builder.show();
+			UiDialogs.builder(getActivity())
+					.setPositiveButton(R.string.clear, this)
+					.setNegativeButton(android.R.string.cancel, null)
+					.setMessage(getString(R.string.clearappsdialog,getExtAppList("\n")))
+					.show();
 		}
 			
 		return true;

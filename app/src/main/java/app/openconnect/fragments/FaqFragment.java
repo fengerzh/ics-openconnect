@@ -73,24 +73,28 @@ public class FaqFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
     		Bundle savedInstanceState) {
     	View v = inflater.inflate(R.layout.faq, container, false);
-    	Activity act = getActivity();
+    	Activity act = requireActivity();
 
     	String items[] = getResources().getStringArray(R.array.faq_text);
     	StringBuilder html = new StringBuilder();
     	html.append(AssetExtractor.readString(act, "header.html"));
+		html.append("<div class=\"faq-list\">");
 
     	// "Q: " and "A: "
     	String q_abbrev = act.getString(R.string.question_abbrev) + " ";
     	String a_abbrev = act.getString(R.string.answer_abbrev) + " ";
 
     	for (int i = 0; i < items.length; i += 2) {
-    		html.append("<b>" + q_abbrev + htmlEncode(items[i]) + "</b><br><br>");
-    		html.append(a_abbrev + htmlEncode(items[i + 1]) + "<br><br>");
+    		html.append("<div class=\"faq-item\">");
+    		html.append("<div class=\"faq-question\">" + q_abbrev + htmlEncode(items[i]) + "</div>");
+    		html.append("<div class=\"faq-answer\">" + a_abbrev + htmlEncode(items[i + 1]) + "</div>");
+    		html.append("</div>");
     	}
+		html.append("</div>");
     	html.append(AssetExtractor.readString(act, "footer.html"));
 
     	WebView contents = (WebView)v.findViewById(R.id.faq_text);
-    	contents.loadDataWithBaseURL("file:///android_asset/", html.toString(), null, null, null);
+    	contents.loadDataWithBaseURL("file:///android_asset/", html.toString(), "text/html", "utf-8", null);
 
     	// setting this through CSS breaks the gradient background
     	contents.setBackgroundColor(0);

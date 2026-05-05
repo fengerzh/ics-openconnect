@@ -27,16 +27,18 @@ package app.openconnect;
 import app.openconnect.core.ProfileManager;
 import app.openconnect.fragments.ConnectionEditorFragment;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowInsetsController;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class ConnectionEditorActivity extends AppCompatActivity {
 
@@ -46,22 +48,41 @@ public class ConnectionEditorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_subpage_host);
+
+        getWindow().setStatusBarColor(getColor(R.color.oc_surface_background));
+        getWindow().setNavigationBarColor(getColor(R.color.oc_surface_background));
+        WindowInsetsController insetsController = getWindow().getInsetsController();
+        if (insetsController != null) {
+            int appearance = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+            insetsController.setSystemBarsAppearance(appearance, appearance);
+        }
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_oc_back);
+        toolbar.setNavigationIconTint(getColor(R.color.oc_text_primary));
+        toolbar.setOverflowIcon(AppCompatResources.getDrawable(this, R.drawable.ic_oc_more_vertical));
+        toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        setSupportActionBar(toolbar);
 
         ConnectionEditorFragment frag = new ConnectionEditorFragment();
         mUUID = getIntent().getStringExtra(getPackageName() + ".profileUUID");
+        mName = getIntent().getStringExtra(getPackageName() + ".profileName");
         Bundle args = new Bundle();
         args.putString("profileUUID", mUUID);
         frag.setArguments(args);
+        setTitle(getString(R.string.edit_profile_title, mName));
 
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, frag)
+                .replace(R.id.fragment_container, frag)
                 .commit();
 
         // On Android 15+, edge-to-edge is enabled by default.
         // Apply system bar insets as padding to the content view so
         // PreferenceFragment content doesn't extend behind status/nav bars.
         ViewCompat.setOnApplyWindowInsetsListener(
-                findViewById(android.R.id.content), (v, insets) -> {
+                findViewById(R.id.subpage_root), (v, insets) -> {
                     v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
                             0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
                     return insets;
@@ -76,6 +97,10 @@ public class ConnectionEditorActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getOnBackPressedDispatcher().onBackPressed();
+            return true;
+        }
         if(item.getItemId() == R.id.remove_vpn)
             askProfileRemoval();
         return super.onOptionsItemSelected(item);
@@ -87,19 +112,18 @@ public class ConnectionEditorActivity extends AppCompatActivity {
     }
 
     private void askProfileRemoval() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Confirm deletion");
-        dialog.setMessage(getString(R.string.remove_vpn_query, mName));
-
-        dialog.setPositiveButton(android.R.string.yes,
+        UiDialogs.builder(this)
+                .setTitle("Confirm deletion")
+                .setMessage(getString(R.string.remove_vpn_query, mName))
+                .setPositiveButton(android.R.string.yes,
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ProfileManager.delete(mUUID);
                 finish();
             }
-        });
-        dialog.setNegativeButton(android.R.string.no,null);
-        dialog.create().show();
+        })
+                .setNegativeButton(android.R.string.no,null)
+                .show();
     }
 }

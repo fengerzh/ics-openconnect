@@ -27,8 +27,10 @@
 package app.openconnect;
 
 import android.os.Bundle;
+import android.view.WindowInsetsController;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -58,11 +60,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().setStatusBarColor(getColor(R.color.oc_surface_background));
+        getWindow().setNavigationBarColor(getColor(R.color.oc_surface_background));
+        WindowInsetsController insetsController = getWindow().getInsetsController();
+        if (insetsController != null) {
+            int appearance = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+            insetsController.setSystemBarsAppearance(appearance, appearance);
+        }
+
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setOverflowIcon(AppCompatResources.getDrawable(this, R.drawable.ic_oc_more_vertical));
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         mViewPager = findViewById(R.id.view_pager);
         mTabLayout = findViewById(R.id.tab_layout);
+
+        toolbar.setNavigationOnClickListener(v -> {
+            if (mViewPager.getCurrentItem() == 0) {
+                toolbar.showOverflowMenu();
+            } else {
+                mViewPager.setCurrentItem(0, true);
+            }
+        });
 
         mPagerAdapter = new MainPagerAdapter(this);
         mViewPager.setAdapter(mPagerAdapter);

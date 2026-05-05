@@ -25,10 +25,12 @@
 package app.openconnect.core;
 
 import app.openconnect.R;
-import android.app.AlertDialog;
+import app.openconnect.UiDialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+
+import androidx.appcompat.app.AlertDialog;
 
 public class CertWarningDialog extends UserDialog
 	implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
@@ -59,7 +61,7 @@ public class CertWarningDialog extends UserDialog
 	@Override
 	public void onStart(Context context) {
 		super.onStart(context);
-		mAlert = new AlertDialog.Builder(context)
+		mAlert = UiDialogs.builder(context)
 			.setTitle(R.string.cert_warning_title)
 			.setMessage(context.getString(R.string.cert_warning_message,
 					mHostname, mReason, mCertSHA1))

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/oc_log_item_bg"
+    android:gravity="top"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="14dp">
+
+    <View
+        android:id="@+id/log_item_dot"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/oc_tintable_dot_bg" />
+
+    <TextView
+        android:id="@+id/log_item_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:lineSpacingExtra="3dp"
+        android:textColor="@color/oc_text_primary"
+        android:textSize="13sp" />
+
+</LinearLayout>

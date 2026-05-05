@@ -25,7 +25,6 @@
 package app.openconnect.fragments;
 
 import android.os.Bundle;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +51,24 @@ public class StatusFragment extends Fragment {
 
 	private CommonMenu mDropdown;
 	private Button mDisconnectButton;
+	private View mConnectionRows;
+	private View mConnectionTimeCard;
+	private View mConnectionStatusDot;
+	private TextView mConnectionStateView;
+	private TextView mConnectionDetailView;
+	private TextView mConnectionTimeView;
+	private TextView mTxPrimaryValue;
+	private TextView mTxSecondaryValue;
+	private TextView mRxPrimaryValue;
+	private TextView mRxSecondaryValue;
+	private TextView mServerNameValue;
+	private TextView mServerNameSecondaryValue;
+	private TextView mLocalIp4Value;
+	private TextView mLocalIp4SecondaryValue;
+	private TextView mLocalIp4NetmaskValue;
+	private TextView mLocalIp4NetmaskSecondaryValue;
+	private TextView mLocalIp6Value;
+	private TextView mLocalIp6SecondaryValue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,10 +77,31 @@ public class StatusFragment extends Fragment {
 
     	mView = inflater.inflate(R.layout.status, container, false);
     	mDisconnectButton = (Button)mView.findViewById(R.id.disconnect_button);
+		mConnectionRows = mView.findViewById(R.id.connection_rows);
+		mConnectionTimeCard = mView.findViewById(R.id.connection_time_card);
+		mConnectionStatusDot = mView.findViewById(R.id.connection_status_dot);
+		mConnectionStateView = (TextView)mView.findViewById(R.id.connection_state);
+		mConnectionDetailView = (TextView)mView.findViewById(R.id.connection_detail);
+		mConnectionTimeView = (TextView)mView.findViewById(R.id.connection_time);
+		mTxPrimaryValue = (TextView)mView.findViewById(R.id.tx_primary_value);
+		mTxSecondaryValue = (TextView)mView.findViewById(R.id.tx_secondary_value);
+		mRxPrimaryValue = (TextView)mView.findViewById(R.id.rx_primary_value);
+		mRxSecondaryValue = (TextView)mView.findViewById(R.id.rx_secondary_value);
+		mServerNameValue = (TextView)mView.findViewById(R.id.server_name_value);
+		mServerNameSecondaryValue = (TextView)mView.findViewById(R.id.server_name_secondary_value);
+		mLocalIp4Value = (TextView)mView.findViewById(R.id.local_ip4_value);
+		mLocalIp4SecondaryValue = (TextView)mView.findViewById(R.id.local_ip4_secondary_value);
+		mLocalIp4NetmaskValue = (TextView)mView.findViewById(R.id.local_ip4_netmask_value);
+		mLocalIp4NetmaskSecondaryValue = (TextView)mView.findViewById(R.id.local_ip4_netmask_secondary_value);
+		mLocalIp6Value = (TextView)mView.findViewById(R.id.local_ip6_value);
+		mLocalIp6SecondaryValue = (TextView)mView.findViewById(R.id.local_ip6_secondary_value);
 
     	mDisconnectButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				if (mConn.service == null) {
+					return;
+				}
 				if (mConn.service.getConnectionState() ==
 						OpenConnectManagementThread.STATE_DISCONNECTED) {
 					mConn.service.startReconnectActivity(requireActivity());
@@ -105,65 +143,72 @@ public class StatusFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-    	mConn.unbind();
+    	if (mConn != null) {
+    		mConn.unbind();
+    	}
     	super.onDestroyView();
     }
 
-    private void writeStatusField(int id, int header_res, String value) {
-    	String html = "<b>" + getString(header_res) + "</b><br>" + value;
-    	TextView tv = (TextView)mView.findViewById(id);
-    	tv.setText(Html.fromHtml(html));
-    }
+	private void setPrimaryAndSecondaryValue(TextView primaryView, TextView secondaryView,
+			String primaryValue, String secondaryValue) {
+		primaryView.setText(primaryValue);
+		if (secondaryValue == null || secondaryValue.length() == 0) {
+			secondaryView.setVisibility(View.GONE);
+		} else {
+			secondaryView.setVisibility(View.VISIBLE);
+			secondaryView.setText(secondaryValue);
+		}
+	}
 
     private void updateUI(OpenVpnService service) {
 		int state = service.getConnectionState();
-		int visibility = View.INVISIBLE;
+		boolean connected = (state == OpenConnectManagementThread.STATE_CONNECTED);
+		String disabled = getString(R.string.disabled);
 
-		if (state == OpenConnectManagementThread.STATE_CONNECTED) {
+		mConnectionStateView.setText(service.getConnectionStateName());
 
-			visibility = View.VISIBLE;
+		if (connected) {
+			mConnectionStatusDot.setVisibility(View.VISIBLE);
+			mConnectionDetailView.setText(getString(R.string.state_connected_to, service.profile.getName()));
+			mConnectionTimeCard.setVisibility(View.VISIBLE);
+			mConnectionTimeView.setText(OpenVpnService.formatElapsedTime(service.startTime.getTime()));
+			mConnectionRows.setVisibility(View.VISIBLE);
 
-			String s = getString(R.string.state_connected_to, service.profile.getName());
-			if (s.length() < 25) {
-				writeStatusField(R.id.connection_state, R.string.netstatus, s);
+			if (mConn.statsValid) {
+				setPrimaryAndSecondaryValue(mTxPrimaryValue, mTxSecondaryValue,
+						OpenVpnService.humanReadableByteCount(mConn.deltaStats.txBytes, true) + "/s",
+						OpenVpnService.humanReadableByteCount(mConn.newStats.txBytes, false));
+				setPrimaryAndSecondaryValue(mRxPrimaryValue, mRxSecondaryValue,
+						OpenVpnService.humanReadableByteCount(mConn.deltaStats.rxBytes, true) + "/s",
+						OpenVpnService.humanReadableByteCount(mConn.newStats.rxBytes, false));
 			} else {
-				writeStatusField(R.id.connection_state, R.string.netstatus,
-					service.getConnectionStateName());
+				setPrimaryAndSecondaryValue(mTxPrimaryValue, mTxSecondaryValue, "--", null);
+				setPrimaryAndSecondaryValue(mRxPrimaryValue, mRxSecondaryValue, "--", null);
 			}
-			writeStatusField(R.id.connection_time, R.string.uptime,
-					OpenVpnService.formatElapsedTime(service.startTime.getTime()));
 
-			int statsVisibility = mConn.statsValid ? View.VISIBLE : View.INVISIBLE;
-			mView.findViewById(R.id.tx).setVisibility(statsVisibility);
-			mView.findViewById(R.id.rx).setVisibility(statsVisibility);
-
-			writeStatusField(R.id.tx, R.string.tx, getString(R.string.oneway_bytecount,
-					OpenVpnService.humanReadableByteCount(mConn.deltaStats.txBytes, true),
-					OpenVpnService.humanReadableByteCount(mConn.newStats.txBytes, false)));
-
-			writeStatusField(R.id.rx, R.string.rx, getString(R.string.oneway_bytecount,
-					OpenVpnService.humanReadableByteCount(mConn.deltaStats.rxBytes, true),
-					OpenVpnService.humanReadableByteCount(mConn.newStats.rxBytes, false)));
-			writeStatusField(R.id.server_name, R.string.server_name, service.serverName);
+			setPrimaryAndSecondaryValue(mServerNameValue, mServerNameSecondaryValue,
+					service.serverName != null ? service.serverName : disabled, null);
 
 			LibOpenConnect.IPInfo ip = service.ipInfo;
-			String dis = getString(R.string.disabled);
-
-			if (ip.addr != null && ip.netmask != null) {
-				writeStatusField(R.id.local_ip4, R.string.local_ip4, ip.addr);
-				writeStatusField(R.id.local_ip4_netmask, R.string.subnet_mask, ip.netmask);
+			if (ip != null && ip.addr != null && ip.netmask != null) {
+				setPrimaryAndSecondaryValue(mLocalIp4Value, mLocalIp4SecondaryValue, ip.addr, null);
+				setPrimaryAndSecondaryValue(mLocalIp4NetmaskValue, mLocalIp4NetmaskSecondaryValue, ip.netmask, null);
 			} else {
-				writeStatusField(R.id.local_ip4, R.string.local_ip4, dis);
+				setPrimaryAndSecondaryValue(mLocalIp4Value, mLocalIp4SecondaryValue, disabled, null);
+				setPrimaryAndSecondaryValue(mLocalIp4NetmaskValue, mLocalIp4NetmaskSecondaryValue, disabled, null);
 			}
 
-			writeStatusField(R.id.local_ip6, R.string.local_ip6, ip.netmask6 != null ? ip.netmask6 : dis);
+			setPrimaryAndSecondaryValue(mLocalIp6Value, mLocalIp6SecondaryValue,
+					(ip != null && ip.netmask6 != null) ? ip.netmask6 : disabled, null);
 		} else {
-			writeStatusField(R.id.connection_state, R.string.netstatus,
-					service.getConnectionStateName());
+			String profileName = service.getReconnectName();
+			mConnectionDetailView.setText(profileName != null
+					? getString(R.string.reconnect_to, profileName)
+					: service.getConnectionStateName());
+			mConnectionStatusDot.setVisibility(View.GONE);
+			mConnectionTimeCard.setVisibility(View.GONE);
+			mConnectionRows.setVisibility(View.GONE);
 		}
-
-		mView.findViewById(R.id.connection_rows).setVisibility(visibility);
-		mView.findViewById(R.id.connection_time).setVisibility(visibility);
 
 		// Check explicitly for "disconnected" so the user can cancel connections-in-progress
 		if (state == OpenConnectManagementThread.STATE_DISCONNECTED) {

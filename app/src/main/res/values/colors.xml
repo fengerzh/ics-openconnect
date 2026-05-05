@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="oc_surface_background">#F5F7FB</color>
+    <color name="oc_surface_background_alt">#EEF3FB</color>
+    <color name="oc_surface">#FFFFFF</color>
+    <color name="oc_card_stroke">#E8EDF6</color>
+    <color name="oc_divider">#E6EBF4</color>
+
+    <color name="oc_text_primary">#0D1B4C</color>
+    <color name="oc_text_secondary">#6F7994</color>
+    <color name="oc_text_tertiary">#8D96AF</color>
+
+    <color name="oc_blue">#0D63F3</color>
+    <color name="oc_blue_dark">#084CD1</color>
+    <color name="oc_blue_light">#EAF2FF</color>
+
+    <color name="oc_green">#14B94B</color>
+    <color name="oc_green_light">#EAF8EF</color>
+
+    <color name="oc_purple">#635BFF</color>
+    <color name="oc_purple_light">#F0EEFF</color>
+
+    <color name="oc_orange">#F29A1A</color>
+    <color name="oc_orange_light">#FDF2E4</color>
+</resources>

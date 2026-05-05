@@ -1,103 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="24dp">
 
-    <TextView
-        android:id="@+id/token_string_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="@string/enter_token_string" />
-
-    <EditText
-        android:id="@+id/token_string_entry"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textMultiLine|textNoSuggestions" >
-
-        <requestFocus />
-    </EditText>
-
-    <TextView
-        android:id="@+id/token_string_examples_0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="italic"
-        android:text="@string/token_string_examples_0" />
-
-    <TextView
-        android:id="@+id/token_string_examples_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="italic"
-        android:text="@string/token_string_examples_1" />
-
-    <TextView
-        android:id="@+id/token_string_examples_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="italic"
-        android:text="@string/token_string_examples_2" />
-
-    <TextView
-        android:id="@+id/token_string_examples_3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textStyle="italic"
-        android:text="@string/token_string_examples_3" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="12sp" />
-
-    <Button
-        android:id="@+id/token_string_import"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/import_from_file" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="12sp" />
-
-    <Button
-        android:id="@+id/token_string_clear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/clear_token" />
-
-    <Space
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="4dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/oc_surface"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/oc_card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/token_string_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/software_token"
+                        android:textColor="@color/oc_text_secondary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/enter_token_string"
+                        android:textColor="@color/oc_text_primary"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/token_string_entry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:background="@drawable/oc_input_bg"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:minHeight="160dp"
+                        android:padding="16dp"
+                        android:textColor="@color/oc_text_primary"
+                        android:textColorHint="@color/oc_text_tertiary">
+
+                        <requestFocus />
+                    </EditText>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/oc_surface"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/oc_card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/token_string_examples_0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/token_string_examples_0"
+                        android:textColor="@color/oc_text_primary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/token_string_examples_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/oc_profile_action_bg"
+                        android:padding="14dp"
+                        android:text="@string/token_string_examples_1"
+                        android:textColor="@color/oc_text_secondary"
+                        android:textIsSelectable="true"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/token_string_examples_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/oc_profile_action_bg"
+                        android:padding="14dp"
+                        android:text="@string/token_string_examples_2"
+                        android:textColor="@color/oc_text_secondary"
+                        android:textIsSelectable="true"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/token_string_examples_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/oc_profile_action_bg"
+                        android:padding="14dp"
+                        android:text="@string/token_string_examples_3"
+                        android:textColor="@color/oc_text_secondary"
+                        android:textIsSelectable="true"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/token_string_import"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/oc_profile_action_bg"
+                    android:text="@string/import_from_file"
+                    android:textAllCaps="false"
+                    android:textColor="@color/oc_text_primary" />
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="1dp" />
+
+                <Button
+                    android:id="@+id/token_string_clear"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/oc_profile_action_bg"
+                    android:text="@string/clear_token"
+                    android:textAllCaps="false"
+                    android:textColor="@color/oc_text_primary" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel" />
+            android:layout_height="52dp"
+            android:background="@drawable/oc_profile_action_bg"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/oc_text_primary" />
 
         <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_width="12dp"
+            android:layout_height="1dp" />
 
         <Button
             android:id="@+id/next_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/next" />
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/oc_disconnect_button_bg"
+            android:text="@string/next"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 

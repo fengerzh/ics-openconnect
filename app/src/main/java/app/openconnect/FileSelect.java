@@ -32,21 +32,25 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
+import android.view.WindowInsetsController;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import app.openconnect.fragments.FileSelectionFragment;
 import app.openconnect.fragments.InlineFileTab;
 
-public class FileSelect extends Activity {
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
+
+public class FileSelect extends AppCompatActivity {
 	public static final String RESULT_DATA = "RESULT_PATH";
 	public static final String START_DATA = "START_DATA";
 	public static final String WINDOW_TITLE = "WINDOW_TILE";
@@ -56,22 +60,44 @@ public class FileSelect extends Activity {
 	public static final String DO_BASE64_ENCODE = "app.openconnect.BASE64ENCODE";
 
 	private static final int MAX_FILE_LEN = 32768;
+	private static final String FILE_FRAGMENT_TAG = "fileExplorer";
+	private static final String INLINE_FRAGMENT_TAG = "inlineEditor";
+	private static final String STATE_SELECTED_TAB = "selectedTab";
+	private static final int TAB_FILE_EXPLORER = 0;
+	private static final int TAB_INLINE_EDITOR = 1;
 
 	private FileSelectionFragment mFSFragment;
 	private InlineFileTab mInlineFragment;
 	private String mData;
-	private Tab inlineFileTab;
-	private Tab fileExplorerTab;
 	private boolean mNoInline;
 	private boolean mForceInline;
 	private boolean mShowClear;
 	private boolean mBase64Encode;
+	private int mSelectedTab = TAB_FILE_EXPLORER;
+	private TabLayout mTabLayout;
 	
 		
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState); 
 		setContentView(R.layout.file_dialog);
+
+		getWindow().setStatusBarColor(getColor(R.color.oc_surface_background));
+		getWindow().setNavigationBarColor(getColor(R.color.oc_surface_background));
+		WindowInsetsController insetsController = getWindow().getInsetsController();
+		if (insetsController != null) {
+			int appearance = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+					| WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+			insetsController.setSystemBarsAppearance(appearance, appearance);
+		}
+
+		MaterialToolbar toolbar = findViewById(R.id.toolbar);
+		toolbar.setNavigationIcon(R.drawable.ic_oc_back);
+		toolbar.setNavigationIconTint(getColor(R.color.oc_text_primary));
+		toolbar.setOverflowIcon(AppCompatResources.getDrawable(this, R.drawable.ic_oc_more_vertical));
+		toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+		setSupportActionBar(toolbar);
 
 		mData = getIntent().getStringExtra(START_DATA);
 		if(mData==null)
@@ -88,28 +114,35 @@ public class FileSelect extends Activity {
 		mForceInline = getIntent().getBooleanExtra(FORCE_INLINE_SELECTION, false);
 		mShowClear = getIntent().getBooleanExtra(SHOW_CLEAR_BUTTON, false);
 		mBase64Encode = getIntent().getBooleanExtra(DO_BASE64_ENCODE, false);
-		
-		ActionBar bar = getActionBar();
-		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); 
-		fileExplorerTab = bar.newTab().setText(R.string.file_explorer_tab);
-		inlineFileTab = bar.newTab().setText(R.string.inline_file_tab); 
 
-		mFSFragment = new FileSelectionFragment();
-		fileExplorerTab.setTabListener(new MyTabsListener<FileSelectionFragment>(this, mFSFragment));
-		bar.addTab(fileExplorerTab);
-		
-		if(!mNoInline) {
-			mInlineFragment = new InlineFileTab();
-			inlineFileTab.setTabListener(new MyTabsListener<InlineFileTab>(this, mInlineFragment));
-			bar.addTab(inlineFileTab);
-			if (mForceInline) {
-				mFSFragment.setForceInLine();
+		mSelectedTab = savedInstanceState != null
+				? savedInstanceState.getInt(STATE_SELECTED_TAB, TAB_FILE_EXPLORER)
+				: TAB_FILE_EXPLORER;
+
+		mFSFragment = (FileSelectionFragment) getFragmentManager().findFragmentByTag(FILE_FRAGMENT_TAG);
+		if (mFSFragment == null) {
+			mFSFragment = new FileSelectionFragment();
+		}
+		applyFileExplorerMode();
+
+		if (!mNoInline) {
+			mInlineFragment = (InlineFileTab) getFragmentManager().findFragmentByTag(INLINE_FRAGMENT_TAG);
+			if (mInlineFragment == null) {
+				mInlineFragment = new InlineFileTab();
 			}
 		} else {
-			mFSFragment.setNoInLine();
+			mSelectedTab = TAB_FILE_EXPLORER;
 		}
 
-		
+		setupTabs();
+		showTab(mSelectedTab);
+
+		ViewCompat.setOnApplyWindowInsetsListener(
+				findViewById(R.id.file_select_root), (v, insets) -> {
+					v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+							0, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
+					return insets;
+				});
 	}
 	
 	public boolean showClear() {
@@ -119,36 +152,68 @@ public class FileSelect extends Activity {
 			return mShowClear;
 	}
 
-	protected class MyTabsListener<T extends Fragment> implements ActionBar.TabListener
-	{
-		private Fragment mFragment;
-		private boolean mAdded=false;
-
-		public MyTabsListener( Activity activity, Fragment fragment){
-			this.mFragment = fragment;
+	private void setupTabs() {
+		mTabLayout = findViewById(R.id.file_tabs);
+		mTabLayout.removeAllTabs();
+		mTabLayout.addTab(mTabLayout.newTab().setText(R.string.file_explorer_tab),
+				mSelectedTab == TAB_FILE_EXPLORER);
+		if (!mNoInline) {
+			mTabLayout.addTab(mTabLayout.newTab().setText(R.string.inline_file_tab),
+					mSelectedTab == TAB_INLINE_EDITOR);
 		}
-
-		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			// Check if the fragment is already initialized
-			if (!mAdded) {
-				// If not, instantiate and add it to the activity
-				ft.add(android.R.id.content, mFragment);
-				mAdded =true;
-			} else {
-				// If it exists, simply attach it in order to show it
-				ft.attach(mFragment);
+		mTabLayout.setVisibility(mTabLayout.getTabCount() > 1 ? TabLayout.VISIBLE : TabLayout.GONE);
+		mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+			@Override
+			public void onTabSelected(TabLayout.Tab tab) {
+				showTab(tab.getPosition());
 			}
-		}	        
 
-		@Override
-		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-			ft.detach(mFragment);
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab) {
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab) {
+			}
+		});
+	}
+
+	private void applyFileExplorerMode() {
+		if (mNoInline) {
+			mFSFragment.setNoInLine();
+		} else if (mForceInline) {
+			mFSFragment.setForceInLine();
 		}
+	}
 
-		@Override
-		public void onTabReselected(Tab tab, FragmentTransaction ft) {
-
+	private void showTab(int position) {
+		if (position == TAB_INLINE_EDITOR && mNoInline) {
+			position = TAB_FILE_EXPLORER;
 		}
+		mSelectedTab = position;
+
+		Fragment fragmentToShow = position == TAB_INLINE_EDITOR ? mInlineFragment : mFSFragment;
+		String fragmentTag = position == TAB_INLINE_EDITOR ? INLINE_FRAGMENT_TAG : FILE_FRAGMENT_TAG;
+		Fragment fragmentToHide = position == TAB_INLINE_EDITOR ? mFSFragment : mInlineFragment;
+
+		android.app.FragmentTransaction tx = getFragmentManager().beginTransaction();
+		if (fragmentToHide != null && fragmentToHide.isAdded()) {
+			tx.detach(fragmentToHide);
+		}
+		if (fragmentToShow != null) {
+			if (fragmentToShow.isAdded()) {
+				tx.attach(fragmentToShow);
+			} else {
+				tx.add(R.id.file_fragment_container, fragmentToShow, fragmentTag);
+			}
+		}
+		tx.commit();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(STATE_SELECTED_TAB, mSelectedTab);
 	}
 	
 	public void importFile(String path) {
@@ -182,11 +247,11 @@ public class FileSelect extends Activity {
 		}
 
 		if (error != null) {
-			Builder ab = new AlertDialog.Builder(this);
-			ab.setTitle(R.string.error_importing_file);
-			ab.setMessage(getString(R.string.import_error_message) + ": " + error);
-			ab.setPositiveButton(android.R.string.ok, null);
-			ab.show();
+			UiDialogs.builder(this)
+					.setTitle(R.string.error_importing_file)
+					.setMessage(getString(R.string.import_error_message) + ": " + error)
+					.setPositiveButton(android.R.string.ok, null)
+					.show();
 		}
 	}
 
@@ -215,7 +280,7 @@ public class FileSelect extends Activity {
 	public void setFile(String path) {
 		Intent intent = new Intent();
 		intent.putExtra(RESULT_DATA, path);
-		setResult(Activity.RESULT_OK,intent);
+		setResult(RESULT_OK,intent);
 		finish();		
 	}
 
@@ -236,7 +301,7 @@ public class FileSelect extends Activity {
 	public void clearData() {
 		Intent intent = new Intent();
 		intent.putExtra(RESULT_DATA, (String)null);
-		setResult(Activity.RESULT_OK,intent);
+		setResult(RESULT_OK,intent);
 		finish();
 		
 	}
@@ -245,7 +310,7 @@ public class FileSelect extends Activity {
 		Intent intent = new Intent();
 		
 		intent.putExtra(RESULT_DATA,VpnProfile.INLINE_TAG + string);
-		setResult(Activity.RESULT_OK,intent);
+		setResult(RESULT_OK,intent);
 		finish();
 		
 	}

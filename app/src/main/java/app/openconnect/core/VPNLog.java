@@ -36,10 +36,13 @@ import org.infradead.libopenconnect.LibOpenConnect;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import app.openconnect.R;
 
 public class VPNLog {
 
@@ -84,16 +87,33 @@ public class VPNLog {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView v;
-			if (convertView != null && convertView instanceof TextView) {
-				v = (TextView)convertView;
-			} else {
-				v = new TextView(mContext);
+			View v = convertView;
+			TextView textView;
+			View dotView;
+			if (v == null) {
+				v = LayoutInflater.from(mContext).inflate(R.layout.log_list_item, parent, false);
 			}
+			textView = (TextView)v.findViewById(R.id.log_item_text);
+			dotView = v.findViewById(R.id.log_item_dot);
 
 			VPNLogItem li = (VPNLogItem)getItem(position);
-			v.setText(li.format(mContext, mTimeFormat));
+			textView.setText(li.format(mContext, mTimeFormat));
+			if (dotView != null && dotView.getBackground() != null) {
+				dotView.getBackground().setTint(getColorForLevel(li.getLevel()));
+			}
 			return v;
+		}
+
+		private int getColorForLevel(int level) {
+			if (level == LEVEL_ERR) {
+				return mContext.getColor(R.color.oc_orange);
+			} else if (level == LEVEL_DEBUG) {
+				return mContext.getColor(R.color.oc_purple);
+			} else if (level == LEVEL_TRACE) {
+				return mContext.getColor(R.color.oc_text_tertiary);
+			} else {
+				return mContext.getColor(R.color.oc_blue);
+			}
 		}
 
 		public void setTimeFormat(String timeFormat) {
