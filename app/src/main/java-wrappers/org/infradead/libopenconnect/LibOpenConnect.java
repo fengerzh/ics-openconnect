@@ -89,13 +89,6 @@ public abstract class LibOpenConnect {
 		}
 	}
 
-	public void resetCancel() {
-		synchronized (asyncLock) {
-			canceled = false;
-		}
-		_resetCancel();
-	}
-
 	public boolean isCanceled() {
 		synchronized (asyncLock) {
 			return canceled;
@@ -290,5 +283,4 @@ public abstract class LibOpenConnect {
 	synchronized native long init(String useragent);
 	synchronized native void free();
 	native void doCancel();
-	native void _resetCancel();
 }
