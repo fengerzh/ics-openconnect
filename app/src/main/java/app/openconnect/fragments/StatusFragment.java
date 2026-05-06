@@ -168,10 +168,17 @@ public class StatusFragment extends Fragment {
 		mConnectionStateView.setText(service.getConnectionStateName());
 
 		if (connected) {
+			String profileName = service.profile != null
+					? service.profile.getName()
+					: service.getReconnectName();
 			mConnectionStatusDot.setVisibility(View.VISIBLE);
-			mConnectionDetailView.setText(getString(R.string.state_connected_to, service.profile.getName()));
+			mConnectionDetailView.setText(profileName != null
+					? getString(R.string.state_connected_to, profileName)
+					: service.getConnectionStateName());
 			mConnectionTimeCard.setVisibility(View.VISIBLE);
-			mConnectionTimeView.setText(OpenVpnService.formatElapsedTime(service.startTime.getTime()));
+			mConnectionTimeView.setText(service.startTime != null
+					? OpenVpnService.formatElapsedTime(service.startTime.getTime())
+					: "--:--");
 			mConnectionRows.setVisibility(View.VISIBLE);
 
 			if (mConn.statsValid) {

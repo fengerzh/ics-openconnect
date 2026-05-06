@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="oc_page_horizontal_padding">16dp</dimen>
+    <dimen name="oc_main_tabs_margin_top">10dp</dimen>
+
+    <dimen name="oc_status_card_padding">14dp</dimen>
+    <dimen name="oc_status_section_margin_top">10dp</dimen>
+    <dimen name="oc_status_section_padding">14dp</dimen>
+    <dimen name="oc_status_detail_panel_margin_top">10dp</dimen>
+    <dimen name="oc_status_detail_row_padding">8dp</dimen>
+    <dimen name="oc_status_header_icon_size">40dp</dimen>
+    <dimen name="oc_status_header_icon_glyph_size">22dp</dimen>
+    <dimen name="oc_status_detail_icon_size">36dp</dimen>
+    <dimen name="oc_status_detail_icon_glyph_size">18dp</dimen>
+    <dimen name="oc_status_detail_icon_label_size">11sp</dimen>
+    <dimen name="oc_status_hero_outer_size">58dp</dimen>
+    <dimen name="oc_status_hero_inner_size">44dp</dimen>
+    <dimen name="oc_status_hero_icon_size">20dp</dimen>
+    <dimen name="oc_status_hero_gap">10dp</dimen>
+    <dimen name="oc_status_detail_gap">4dp</dimen>
+    <dimen name="oc_status_dot_size">8dp</dimen>
+    <dimen name="oc_status_time_card_margin_start">6dp</dimen>
+    <dimen name="oc_status_time_card_min_width">60dp</dimen>
+    <dimen name="oc_status_time_card_padding_horizontal">8dp</dimen>
+    <dimen name="oc_status_time_card_padding_vertical">6dp</dimen>
+    <dimen name="oc_status_time_value_size">13sp</dimen>
+    <dimen name="oc_status_button_height">56dp</dimen>
+    <dimen name="oc_status_button_margin_top">12dp</dimen>
+    <dimen name="oc_status_detail_item_gap">10dp</dimen>
+</resources>

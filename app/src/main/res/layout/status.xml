@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingTop="8dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="24dp">
+    android:paddingStart="@dimen/oc_page_horizontal_padding"
+    android:paddingTop="4dp"
+    android:paddingEnd="@dimen/oc_page_horizontal_padding"
+    android:paddingBottom="16dp">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -27,9 +27,8 @@
                 android:id="@+id/connection_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
                 app:cardBackgroundColor="@color/oc_surface"
-                app:cardCornerRadius="28dp"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/oc_card_stroke"
                 app:strokeWidth="1dp">
@@ -39,23 +38,23 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="24dp">
+                    android:padding="@dimen/oc_status_card_padding">
 
                     <FrameLayout
-                        android:layout_width="108dp"
-                        android:layout_height="108dp"
+                        android:layout_width="@dimen/oc_status_hero_outer_size"
+                        android:layout_height="@dimen/oc_status_hero_outer_size"
                         android:background="@drawable/oc_status_outer_circle">
 
                         <FrameLayout
-                            android:layout_width="76dp"
-                            android:layout_height="76dp"
+                            android:layout_width="@dimen/oc_status_hero_inner_size"
+                            android:layout_height="@dimen/oc_status_hero_inner_size"
                             android:layout_gravity="center"
                             android:background="@drawable/oc_status_inner_circle">
 
                             <ImageView
                                 android:id="@+id/connection_icon"
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
+                                android:layout_width="@dimen/oc_status_hero_icon_size"
+                                android:layout_height="@dimen/oc_status_hero_icon_size"
                                 android:layout_gravity="center"
                                 android:contentDescription="@null"
                                 android:src="@drawable/ic_oc_check" />
@@ -67,42 +66,43 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="@dimen/oc_status_hero_gap"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/connection_state"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:fontFamily="sans-serif-medium"
                             android:maxLines="1"
                             android:textColor="@color/oc_text_primary"
-                            android:textSize="18sp" />
+                            android:textSize="15sp" />
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="@dimen/oc_status_detail_gap"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <View
                                 android:id="@+id/connection_status_dot"
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
+                                android:layout_width="@dimen/oc_status_dot_size"
+                                android:layout_height="@dimen/oc_status_dot_size"
                                 android:background="@drawable/oc_status_dot" />
 
                             <TextView
                                 android:id="@+id/connection_detail"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_gap"
+                                android:layout_weight="1"
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:textColor="@color/oc_text_primary"
-                                android:textSize="14sp" />
+                                android:textSize="11sp" />
 
                         </LinearLayout>
 
@@ -112,15 +112,15 @@
                         android:id="@+id/connection_time_card"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="@dimen/oc_status_time_card_margin_start"
                         android:background="@drawable/oc_uptime_pill_bg"
                         android:gravity="center"
-                        android:minWidth="94dp"
+                        android:minWidth="@dimen/oc_status_time_card_min_width"
                         android:orientation="vertical"
-                        android:paddingStart="18dp"
-                        android:paddingTop="14dp"
-                        android:paddingEnd="18dp"
-                        android:paddingBottom="14dp"
+                        android:paddingStart="@dimen/oc_status_time_card_padding_horizontal"
+                        android:paddingTop="@dimen/oc_status_time_card_padding_vertical"
+                        android:paddingEnd="@dimen/oc_status_time_card_padding_horizontal"
+                        android:paddingBottom="@dimen/oc_status_time_card_padding_vertical"
                         android:visibility="gone">
 
                         <TextView
@@ -128,16 +128,16 @@
                             android:layout_height="wrap_content"
                             android:text="@string/status_runtime"
                             android:textColor="@color/oc_blue"
-                            android:textSize="12sp" />
+                            android:textSize="9sp" />
 
                         <TextView
                             android:id="@+id/connection_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/oc_blue"
-                            android:textSize="20sp" />
+                            android:textSize="@dimen/oc_status_time_value_size" />
 
                     </LinearLayout>
 
@@ -149,10 +149,10 @@
                 android:id="@+id/connection_rows"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="@dimen/oc_status_section_margin_top"
                 android:visibility="gone"
                 app:cardBackgroundColor="@color/oc_surface"
-                app:cardCornerRadius="28dp"
+                app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/oc_card_stroke"
                 app:strokeWidth="1dp">
@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:padding="@dimen/oc_status_section_padding">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -170,14 +170,14 @@
                         android:orientation="horizontal">
 
                         <FrameLayout
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="@dimen/oc_status_header_icon_size"
+                            android:layout_height="@dimen/oc_status_header_icon_size"
                             android:background="@drawable/oc_icon_chip_bg"
                             android:backgroundTint="@color/oc_blue_light">
 
                             <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
+                                android:layout_width="@dimen/oc_status_header_icon_glyph_size"
+                                android:layout_height="@dimen/oc_status_header_icon_glyph_size"
                                 android:layout_gravity="center"
                                 android:contentDescription="@null"
                                 android:src="@drawable/ic_oc_globe" />
@@ -187,18 +187,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
+                            android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                             android:fontFamily="sans-serif-medium"
                             android:text="@string/status_network_details"
                             android:textColor="@color/oc_text_primary"
-                            android:textSize="18sp" />
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="@dimen/oc_status_detail_panel_margin_top"
                         android:background="@drawable/oc_detail_panel_bg"
                         android:orientation="vertical">
 
@@ -207,17 +207,17 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="18dp">
+                            android:padding="@dimen/oc_status_detail_row_padding">
 
                             <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
+                                android:layout_width="@dimen/oc_status_detail_icon_size"
+                                android:layout_height="@dimen/oc_status_detail_icon_size"
                                 android:background="@drawable/oc_icon_chip_bg"
                                 android:backgroundTint="@color/oc_blue_light">
 
                                 <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="@dimen/oc_status_detail_icon_glyph_size"
+                                    android:layout_height="@dimen/oc_status_detail_icon_glyph_size"
                                     android:layout_gravity="center"
                                     android:contentDescription="@null"
                                     android:src="@drawable/ic_oc_arrow_up" />
@@ -227,7 +227,7 @@
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
@@ -237,15 +237,15 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/status_tx_title"
                                     android:textColor="@color/oc_text_primary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:text="@string/status_tx_subtitle"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -263,17 +263,17 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_blue"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/tx_secondary_value"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:ellipsize="end"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -289,17 +289,17 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="18dp">
+                            android:padding="@dimen/oc_status_detail_row_padding">
 
                             <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
+                                android:layout_width="@dimen/oc_status_detail_icon_size"
+                                android:layout_height="@dimen/oc_status_detail_icon_size"
                                 android:background="@drawable/oc_icon_chip_bg"
                                 android:backgroundTint="@color/oc_green_light">
 
                                 <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="@dimen/oc_status_detail_icon_glyph_size"
+                                    android:layout_height="@dimen/oc_status_detail_icon_glyph_size"
                                     android:layout_gravity="center"
                                     android:contentDescription="@null"
                                     android:src="@drawable/ic_oc_arrow_down" />
@@ -309,7 +309,7 @@
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
@@ -319,15 +319,15 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/status_rx_title"
                                     android:textColor="@color/oc_text_primary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:text="@string/status_rx_subtitle"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -345,17 +345,17 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_green"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/rx_secondary_value"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:ellipsize="end"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -371,17 +371,17 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="18dp">
+                            android:padding="@dimen/oc_status_detail_row_padding">
 
                             <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
+                                android:layout_width="@dimen/oc_status_detail_icon_size"
+                                android:layout_height="@dimen/oc_status_detail_icon_size"
                                 android:background="@drawable/oc_icon_chip_bg"
                                 android:backgroundTint="@color/oc_purple_light">
 
                                 <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="@dimen/oc_status_detail_icon_glyph_size"
+                                    android:layout_height="@dimen/oc_status_detail_icon_glyph_size"
                                     android:layout_gravity="center"
                                     android:contentDescription="@null"
                                     android:src="@drawable/ic_oc_server" />
@@ -391,7 +391,7 @@
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
@@ -401,15 +401,15 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/status_server_title"
                                     android:textColor="@color/oc_text_primary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:text="@string/status_server_subtitle"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -427,7 +427,7 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/server_name_secondary_value"
@@ -450,23 +450,23 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="18dp">
+                            android:padding="@dimen/oc_status_detail_row_padding">
 
                             <TextView
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
+                                android:layout_width="@dimen/oc_status_detail_icon_size"
+                                android:layout_height="@dimen/oc_status_detail_icon_size"
                                 android:background="@drawable/oc_icon_chip_bg"
                                 android:backgroundTint="@color/oc_blue_light"
                                 android:fontFamily="sans-serif-medium"
                                 android:gravity="center"
                                 android:text="IP"
                                 android:textColor="@color/oc_blue"
-                                android:textSize="17sp" />
+                                android:textSize="@dimen/oc_status_detail_icon_label_size" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
@@ -476,15 +476,15 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/status_ipv4_title"
                                     android:textColor="@color/oc_text_primary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:text="@string/status_ipv4_subtitle"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -502,7 +502,7 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/local_ip4_secondary_value"
@@ -525,17 +525,17 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="18dp">
+                            android:padding="@dimen/oc_status_detail_row_padding">
 
                             <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
+                                android:layout_width="@dimen/oc_status_detail_icon_size"
+                                android:layout_height="@dimen/oc_status_detail_icon_size"
                                 android:background="@drawable/oc_icon_chip_bg"
                                 android:backgroundTint="@color/oc_orange_light">
 
                                 <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="@dimen/oc_status_detail_icon_glyph_size"
+                                    android:layout_height="@dimen/oc_status_detail_icon_glyph_size"
                                     android:layout_gravity="center"
                                     android:contentDescription="@null"
                                     android:src="@drawable/ic_oc_route" />
@@ -545,7 +545,7 @@
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
@@ -555,15 +555,15 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/status_netmask_title"
                                     android:textColor="@color/oc_text_primary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:text="@string/status_netmask_subtitle"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -581,7 +581,7 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/local_ip4_netmask_secondary_value"
@@ -604,23 +604,23 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="18dp">
+                            android:padding="@dimen/oc_status_detail_row_padding">
 
                             <TextView
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
+                                android:layout_width="@dimen/oc_status_detail_icon_size"
+                                android:layout_height="@dimen/oc_status_detail_icon_size"
                                 android:background="@drawable/oc_icon_chip_bg"
                                 android:backgroundTint="@color/oc_purple_light"
                                 android:fontFamily="sans-serif-medium"
                                 android:gravity="center"
                                 android:text="IP"
                                 android:textColor="@color/oc_purple"
-                                android:textSize="17sp" />
+                                android:textSize="@dimen/oc_status_detail_icon_label_size" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
+                                android:layout_marginStart="@dimen/oc_status_detail_item_gap"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
@@ -630,15 +630,15 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:text="@string/status_ipv6_title"
                                     android:textColor="@color/oc_text_primary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="4dp"
                                     android:text="@string/status_ipv6_subtitle"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="13sp" />
+                                    android:textSize="10sp" />
 
                             </LinearLayout>
 
@@ -656,7 +656,7 @@
                                     android:fontFamily="sans-serif-medium"
                                     android:maxLines="1"
                                     android:textColor="@color/oc_text_secondary"
-                                    android:textSize="16sp" />
+                                    android:textSize="13sp" />
 
                                 <TextView
                                     android:id="@+id/local_ip6_secondary_value"
@@ -682,10 +682,10 @@
     <Button
         android:id="@+id/disconnect_button"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_marginTop="18dp"
+        android:layout_height="@dimen/oc_status_button_height"
+        android:layout_marginTop="@dimen/oc_status_button_margin_top"
         android:background="@drawable/oc_disconnect_button_bg"
-        android:drawablePadding="12dp"
+        android:drawablePadding="10dp"
         android:drawableStart="@drawable/ic_oc_link_off"
         android:drawableTint="@android:color/white"
         android:fontFamily="sans-serif-medium"
@@ -693,7 +693,7 @@
         android:text="@string/disconnect"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:visibility="invisible" />
 
 </LinearLayout>
