@@ -124,7 +124,9 @@ public class StatusFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+		// The parent Tab0HostFragment owns the menu and dispatches the callbacks
+		// here exactly once (see MainActivity.Tab0HostFragment).
+		setHasOptionsMenu(false);
 	}
 
 	@Override
@@ -134,7 +136,7 @@ public class StatusFragment extends Fragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mDropdown.onOptionsItemSelected(item)) {
+		if (mDropdown != null && mDropdown.onOptionsItemSelected(item)) {
 			return true;
 		} else {
 			return super.onOptionsItemSelected(item);

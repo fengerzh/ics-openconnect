@@ -82,15 +82,20 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ```bash
 mkdir -p /tmp/openconnect-build
-javac -d /tmp/openconnect-build \
+javac --release 17 -d /tmp/openconnect-build \
   app/src/main/java-wrappers/org/infradead/libopenconnect/LibOpenConnect.java
 jar cf app/libs/openconnect-wrapper.jar -C /tmp/openconnect-build .
 
 mkdir -p /tmp/stoken-build
-javac -d /tmp/stoken-build \
+javac --release 17 -d /tmp/stoken-build \
   app/src/main/java-wrappers/org/stoken/LibStoken.java
 jar cf app/libs/stoken-wrapper.jar -C /tmp/stoken-build .
 ```
+
+注意：主工程按 Java 17 编译（`sourceCompatibility = 17`），wrapper jar 也必须用
+`--release 17` 生成。如果直接用本机默认的 JDK 21 编译，jar 里的 class 版本会是 65，
+编译时 javac 会报「无法访问 LibOpenConnect / 类文件具有错误的版本 65.0, 应为 61.0」，
+并连带产生大量「程序包 LibOpenConnect 不存在」错误。
 
 如需重编 `arm64-v8a` 的 `libopenconnect.so`，先在 submodule 中应用本地证书兼容补丁，再运行 Android NDK 构建脚本：
 

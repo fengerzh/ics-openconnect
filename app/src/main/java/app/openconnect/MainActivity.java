@@ -27,7 +27,14 @@
 package app.openconnect;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowInsetsController;
+import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -47,6 +54,8 @@ import app.openconnect.fragments.*;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "OpenConnect";
+
+    private static final String KEY_ACTIVE_TAB = "active_tab";
 
     private ViewPager2 mViewPager;
     private TabLayout mTabLayout;
@@ -103,22 +112,39 @@ public class MainActivity extends AppCompatActivity {
             }
         ).attach();
 
+        if (savedInstanceState != null) {
+            int savedTab = savedInstanceState.getInt(KEY_ACTIVE_TAB, 0);
+            if (savedTab >= 0 && savedTab < mPagerAdapter.getItemCount()) {
+                mViewPager.setCurrentItem(savedTab, false);
+            }
+        }
+
         FeedbackFragment.recordUse(this, false);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle b) {
         super.onSaveInstanceState(b);
-        b.putInt("active_tab", mViewPager.getCurrentItem());
+        b.putInt(KEY_ACTIVE_TAB, mViewPager.getCurrentItem());
     }
 
     private void updateUI(OpenVpnService service) {
         int newState = service.getConnectionState();
         service.startActiveDialog(this);
 
+        // The first page is a stable host Fragment. Switching its content must not
+        // change the ViewPager2 adapter's item ids: FragmentStateAdapter caches
+        // Fragments by item id, and a mismatch on re-attach used to throw
+        // "IllegalStateException: Design assumption violated".
+        boolean showingStatus = newState != OpenConnectManagementThread.STATE_DISCONNECTED;
+        for (Fragment f : getSupportFragmentManager().getFragments()) {
+            if (f instanceof Tab0HostFragment) {
+                ((Tab0HostFragment) f).setShowingStatus(showingStatus);
+            }
+        }
+
         if (mConnectionState != newState) {
             mConnectionState = newState;
-            mPagerAdapter.notifyTab0Changed();
             TabLayout.Tab tab0 = mTabLayout.getTabAt(0);
             if (tab0 != null) {
                 tab0.setText(newState == OpenConnectManagementThread.STATE_DISCONNECTED
@@ -148,20 +174,8 @@ public class MainActivity extends AppCompatActivity {
 
     private class MainPagerAdapter extends FragmentStateAdapter {
 
-        private static final long ID_VPN_LIST = 0L;
-        private static final long ID_STATUS = 1L;
-        private static final long ID_LOG = 2L;
-        private static final long ID_FAQ = 3L;
-
-        private boolean mShowingStatus = false;
-
         public MainPagerAdapter(AppCompatActivity activity) {
             super(activity);
-        }
-
-        public void notifyTab0Changed() {
-            mShowingStatus = (mConnectionState != OpenConnectManagementThread.STATE_DISCONNECTED);
-            notifyItemChanged(0);
         }
 
         @Override
@@ -173,22 +187,116 @@ public class MainActivity extends AppCompatActivity {
         public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
-                    return mShowingStatus ? new StatusFragment() : new VPNProfileList();
+                    return new Tab0HostFragment();
                 case 1:
                     return new LogFragment();
                 case 2:
                     return new FaqFragment();
                 default:
-                    return new VPNProfileList();
+                    return new Tab0HostFragment();
+            }
+        }
+    }
+
+    /**
+     * Stable host for the first ViewPager2 page.
+     *
+     * The list and the connection status used to be two different Fragments
+     * returned by createFragment(0), selected through a changing item id.
+     * FragmentStateAdapter caches Fragments by that id, so changing the id (or
+     * returning ids outside the 0..getItemCount()-1 range without overriding
+     * containsItem()) made view holders point at Fragments that had already
+     * been collected, crashing on re-attach. Keep the page itself fixed and
+     * swap only its child content instead.
+     *
+     * The host also owns the options menu: child Fragments declare no menu of
+     * their own, so their menu callbacks are dispatched exactly once from here.
+     */
+    public static class Tab0HostFragment extends Fragment {
+
+        private static final String KEY_SHOWING_STATUS = "tab0_showing_status";
+
+        private boolean mShowingStatus = false;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setHasOptionsMenu(true);
+            if (savedInstanceState != null) {
+                mShowingStatus = savedInstanceState.getBoolean(KEY_SHOWING_STATUS, false);
             }
         }
 
         @Override
-        public long getItemId(int position) {
-            if (position == 0) {
-                return mShowingStatus ? ID_STATUS : ID_VPN_LIST;
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            FrameLayout host = new FrameLayout(requireContext());
+            host.setId(R.id.tab0_fragment_container);
+            host.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            return host;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            applyChildFragment();
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putBoolean(KEY_SHOWING_STATUS, mShowingStatus);
+        }
+
+        public void setShowingStatus(boolean showingStatus) {
+            if (mShowingStatus == showingStatus) {
+                return;
             }
-            return position + 2L;
+            mShowingStatus = showingStatus;
+            applyChildFragment();
+        }
+
+        private void applyChildFragment() {
+            if (!isAdded() || getView() == null) {
+                // The view will be recreated later; onViewCreated applies the state then.
+                return;
+            }
+            Fragment current = getChildFragmentManager()
+                .findFragmentById(R.id.tab0_fragment_container);
+            if ((mShowingStatus && current instanceof StatusFragment)
+                    || (!mShowingStatus && current instanceof VPNProfileList)) {
+                return;
+            }
+            if (getChildFragmentManager().isStateSaved()) {
+                return;
+            }
+            Fragment child = mShowingStatus ? new StatusFragment() : new VPNProfileList();
+            getChildFragmentManager().beginTransaction()
+                .replace(R.id.tab0_fragment_container, child)
+                .commitNow();
+            requireActivity().invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            Fragment child = currentChild();
+            if (child != null) {
+                child.onCreateOptionsMenu(menu, inflater);
+            }
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            Fragment child = currentChild();
+            if (child != null && child.onOptionsItemSelected(item)) {
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+
+        private Fragment currentChild() {
+            return getChildFragmentManager().findFragmentById(R.id.tab0_fragment_container);
         }
     }
 }

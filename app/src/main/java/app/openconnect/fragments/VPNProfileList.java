@@ -123,7 +123,9 @@ public class VPNProfileList extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+		// The parent Tab0HostFragment owns the menu and dispatches the callbacks
+		// here exactly once (see MainActivity.Tab0HostFragment).
+		setHasOptionsMenu(false);
 	}
 
 	@Override
@@ -249,7 +251,7 @@ public class VPNProfileList extends Fragment {
 		if (itemId == MENU_ADD_PROFILE) {
 			onAddProfileClicked("");
 			return true;
-		} else if (mDropdown.onOptionsItemSelected(item)) {
+		} else if (mDropdown != null && mDropdown.onOptionsItemSelected(item)) {
 			return true;
 		} else {
 			return super.onOptionsItemSelected(item);

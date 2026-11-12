@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Stable container id for the child Fragments hosted by MainActivity.Tab0HostFragment.
+         Must be a resource id (not a generated one) so that child Fragments are
+         restored into the same container after the Activity is recreated. -->
+    <item name="tab0_fragment_container" type="id" />
+</resources>
