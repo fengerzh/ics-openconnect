@@ -7,6 +7,10 @@
 
 # macOS
 .DS_Store
+__MACOSX/
+
+# WorkBuddy project data (local notes / diagnostics, not for the public repo)
+/.workbuddy/
 
 # Gradle
 /.gradle/
@@ -23,3 +27,4 @@
 
 # Local design references
 /openconnect-new-design.png
+/openconnect-new-design.png.zip
