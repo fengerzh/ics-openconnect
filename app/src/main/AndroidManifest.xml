@@ -18,6 +18,10 @@
         android:label="Control OpenConnect"
         android:protectionLevel="dangerous" />
 
+    <!-- The app is portrait-only. Each fullscreen opaque activity declares the
+        orientation explicitly; the dialog-themed crash reporter below must NOT
+        request one, or Android 8+ throws "Only fullscreen opaque activities can
+        request orientation" when it starts. -->
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -27,12 +31,15 @@
         android:name="app.openconnect.Application" >
         <activity
             android:name=".ConnectionEditorActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.OpenConnect" />
         <activity
             android:name=".FragActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.OpenConnect" />
         <activity
             android:name=".TokenImportActivity"
+            android:screenOrientation="portrait"
             android:exported="true" >
 
             <intent-filter>
@@ -82,9 +89,11 @@
 
             </activity>
         <activity android:name=".FileSelect"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.OpenConnect" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
             tools:ignore="ExportedActivity" >
             <intent-filter>
@@ -95,6 +104,7 @@
             </intent-filter>
         </activity>
 
+        <!-- No screenOrientation here: this is a non-fullscreen dialog activity. -->
         <activity
             android:name="org.acra.CrashReportDialog"
             android:theme="@style/Theme.Material3.Light.Dialog"
@@ -123,6 +133,7 @@
         <activity
             android:permission="app.openconnect.REMOTE_API"
             android:name=".api.GrantPermissionsActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -131,6 +142,7 @@
         <activity
             android:permission="app.openconnect.REMOTE_API"
             android:name=".api.ConfirmDialog"
+            android:screenOrientation="portrait"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

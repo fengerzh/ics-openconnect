@@ -96,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Page changes are tab-driven only: swiping the pager horizontally is
+        // disabled so the VPN list / log / FAQ cannot be switched by accident.
+        // TabLayoutMediator and setCurrentItem() still work with this flag off.
+        mViewPager.setUserInputEnabled(false);
+
         mPagerAdapter = new MainPagerAdapter(this);
         mViewPager.setAdapter(mPagerAdapter);
 
