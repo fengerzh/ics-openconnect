@@ -9,4 +9,42 @@
     <item>已连接</item>
     <item>未连接</item>
   </string-array>
+
+  <string-array name="faq_text">
+    <item>这个应用是做什么用的？</item>
+    <item>OpenConnect 用于接入采用 Cisco AnyConnect SSL VPN 协议的虚拟专用网络（VPN）。典型的使用场景是下班后远程登录单位网络查看邮件。\n\n如果不确定是否适用，请咨询您的 IT 管理员，确认单位是否提供相应的服务。</item>
+
+    <item>该如何开始使用？</item>
+    <item>大多数情况下，只需新建一个配置文件并填写 VPN 网关的主机名即可。配置文件里的其他字段都是可选的，除非确有需要，否则请保持默认值、不要改动。\n\n配置完成后，点选该 VPN 条目，OpenConnect 就会尝试建立新会话。如果连接失败，「日志」标签页里通常能找到有用的诊断信息。</item>
+
+    <item>如何使用 SSL 客户端证书进行认证？</item>
+    <item>先把证书文件复制到 Android 的外部存储目录（通常是 /sdcard 或「下载」文件夹），然后编辑 VPN 配置文件，按文件类型做如下设置：\n\nP12 或 PFX 文件：点选「用户认证」，从列表中选中该文件，再点「选择」。「私有密钥」留空。\n\n单个 PEM/CRT/CER 文件：同上。\n\n分开的 PEM/CRT/CER 证书文件与 KEY 密钥文件：在「用户认证」中填入证书文件，在「私有密钥」中填入密钥文件。\n\n完成后，请把证书文件从外部存储中删除，以免被其他应用窃取。\n\n如果您要自己生成密钥（例如用于 ocserv 网关），可以参考[这里的基础 CA 配置说明](http://forum.xda-developers.com/showpost.php?p=52119253&amp;postcount=25)。</item>
+
+    <item>OpenConnect 能用于非 AnyConnect 的 VPN 吗？</item>
+    <item>很遗憾，本软件的架构与 AnyConnect 的协议要求以及 libopenconnect 的接口紧密绑定，因此只支持 Cisco AnyConnect 和 ocserv 网关。</item>
+
+    <item>OpenConnect 能连接 ASA 上运行的 Cisco IPsec VPN 吗？</item>
+    <item>不能。OpenConnect 仅支持 SSL VPN（CSTP + DTLS）。</item>
+
+    <item>如何导入 SecurID 软件令牌？</item>
+    <item>如果邮件里有以「com.rsa.securid.iphone://」或「http://127.0.0.1/securid/」开头的链接，直接点击它，并让 OpenConnect 把令牌添加到目标 VPN 配置文件即可。如果手上只有一个原始的令牌字符串，请把它写入一个文本文件、复制到 /sdcard，然后在 VPN 配置文件编辑器中点「令牌字符串」，再选中该文件。\n\n如果您有 sdtid 格式的 XML 文件，把它复制到 /sdcard 后导入即可。</item>
+
+    <item>连接时能跳过所有登录提示吗？</item>
+    <item>如果您已保存用户名、密码或其他凭据，或者使用 SecurID、证书认证，可以在 VPN 配置文件中开启「批处理模式」来跳过登录对话框。以后若要修改已保存的密码，或遇到连接问题，关闭批处理模式即可。\n\nVPN 警告对话框是 Android 系统内置的安全机制。若设备已 root，可通过安装 [Xposed 框架](http://forum.xda-developers.com/xposed/xposed-installer-versions-changelog-t2714053)、启用 OpenConnect 模块并重启来绕过它。\n\n由于这些对话框必须由用户手动确认，无法保证在后台可靠地启动 VPN，因此目前没有提供「开机自动连接」功能。</item>
+
+    <item>VPN 连接期间如何省电？</item>
+    <item>一种办法是在「设置」中勾选「睡眠时暂停」。代价是屏幕关闭后 VPN 访问会暂时中断；而且 ASA 网关对频繁重连比较敏感，几天后可能会提前终止您的会话。\n\n另一种办法是联系服务器管理员，请其关闭死对等体检测（DPD）、把空闲超时调到 1 小时以上，并把 keepalive 间隔调整到 5 分钟左右。</item>
+
+    <item>如何配合 AFWall+ 使用 OpenConnect？</item>
+    <item>在 Android 上同时使用防火墙和 VPN 时，有几点需要注意：\n\n* 如果您用的是 KitKat，请确保系统为 Android 4.4.2 或更高、AFWall 为 1.2.8 或更高。Android 4.4 和 4.4.1 存在严重的 TCP MSS 缺陷，会导致连接停滞或性能下降；AFWall 1.2.7 及更早版本也缺少处理 KitKat 路由变化所需的逻辑。\n* 务必允许 VPN 应用在所有网络接口上的流量。特别是要把 OpenConnect 发出的 VPN 流量加入白名单——OpenConnect 每隔几分钟会通过 VPN 接口发送一次 DNS 请求，以避免连接被超时断开。</item>
+
+    <item>有哪些应用与 VPN 不兼容吗？</item>
+    <item>自行进行 DNS 解析的应用（例如 Firefox）在连接 VPN 时，可能无法及时获取最新的系统 DNS 设置。如果系统 DNS 服务器不在 VPN 路由可达的范围内，或者您要解析的主机名没有公网（互联网）DNS 记录，就可能出现问题。</item>
+
+    <item>什么情况下 OpenConnect 会申请 root 权限？</item>
+    <item>「设置」里有两个需要 root 权限的功能，默认均为关闭状态：一个用于绕过 CM9 ROM 的缺陷（该缺陷会给 /dev/tun 设置错误的权限，导致 VpnService 无法把流量送入隧道接口）；另一个用于在默认不加载 tun.ko 的 ROM 上手动加载该模块。\n\n根据用户反馈和测试情况，后续版本可能会自动检测这些条件。</item>
+
+    <item>如何提交问题报告？</item>
+    <item>依次进入「日志」→（菜单）→「发送日志文件」。请务必附上完整、准确的问题描述，因为日志并不总能直接指出症结所在。</item>
+  </string-array>
 </resources>
